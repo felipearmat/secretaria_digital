@@ -1,0 +1,126 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 12:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: apps/autenticacao/serializers.py:40
+msgid "Passwords do not match."
+msgstr "As senhas não coincidem."
+
+#: apps/autenticacao/serializers.py:64
+msgid "Invalid credentials."
+msgstr "Credenciais inválidas."
+
+#: apps/autenticacao/serializers.py:66
+msgid "Inactive user."
+msgstr "Usuário inativo."
+
+#: apps/autenticacao/serializers.py:70
+msgid "Username and password are required."
+msgstr "Nome de usuário e senha são obrigatórios."
+
+#: apps/autenticacao/views.py:78
+msgid "Permission denied"
+msgstr "Permissão negada"
+
+#: apps/autenticacao/views.py:64
+msgid "Logout successful"
+msgstr "Logout realizado com sucesso"
+
+#: apps/agendamentos/serializers.py:58
+msgid "The selected user is not an actor."
+msgstr "O usuário selecionado não é um ator."
+
+#: apps/agendamentos/serializers.py:62
+msgid "The service does not belong to the selected actor."
+msgstr "O serviço não pertence ao ator selecionado."
+
+#: apps/agendamentos/serializers.py:73
+msgid "The start date/time must be before the end date/time."
+msgstr "A data/hora de início deve ser anterior à data/hora de fim."
+
+#: apps/agendamentos/serializers.py:78
+msgid "Cannot schedule in the past."
+msgstr "Não é possível agendar no passado."
+
+#: apps/agendamentos/serializers.py:94
+msgid "There is already an appointment at this time for this actor."
+msgstr "Já existe um agendamento neste horário para este ator."
+
+#: apps/agendamentos/serializers.py:108
+msgid "This time is blocked: {title}"
+msgstr "Este horário está bloqueado: {title}"
+
+#: apps/agendamentos/views.py:104
+msgid "Permission denied"
+msgstr "Permissão negada"
+
+#: apps/agendamentos/views.py:115
+msgid "Appointment confirmed"
+msgstr "Agendamento confirmado"
+
+#: apps/agendamentos/views.py:125
+msgid "Permission denied"
+msgstr "Permissão negada"
+
+#: apps/agendamentos/views.py:135
+msgid "Appointment cancelled"
+msgstr "Agendamento cancelado"
+
+#: apps/agendamentos/views.py:145
+msgid "actor_id and date are required"
+msgstr "actor_id e data são obrigatórios"
+
+#: apps/agendamentos/views.py:153
+msgid "Invalid date format. Use YYYY-MM-DD"
+msgstr "Formato de data inválido. Use YYYY-MM-DD"
+
+#: apps/empresas/models.py:63
+msgid "The actor must belong to the same company as the service."
+msgstr "O ator deve pertencer à mesma empresa do serviço."
+
+#: apps/agendamentos/models.py:139
+msgid "The start date/time must be before the end date/time."
+msgstr "A data/hora de início deve ser anterior à data/hora de fim."
+
+#: apps/agendamentos/models.py:151
+msgid "There is already an appointment at this time for this actor."
+msgstr "Já existe um agendamento neste horário para este ator."
+
+#: apps/agendamentos/models.py:235
+msgid "Day of week is required for weekly recurrence."
+msgstr "Dia da semana é obrigatório para recorrência semanal."
+
+#: apps/agendamentos/models.py:241
+msgid "Day of month is required for monthly recurrence."
+msgstr "Dia do mês é obrigatório para recorrência mensal."
+
+#: apps/agendamentos/models.py:301
+msgid "The start date/time must be before the end date/time."
+msgstr "A data/hora de início deve ser anterior à data/hora de fim."
+
+#: apps/feature_flags/views.py:25
+msgid "Only superusers can toggle feature flags"
+msgstr "Apenas superusuários podem alternar feature flags"
+
+#: apps/feature_flags/views.py:45
+msgid "Language is not enabled"
+msgstr "Idioma não está habilitado"
+
+#: apps/feature_flags/views.py:55
+msgid "Current language configuration not found"
+msgstr "Configuração de idioma atual não encontrada"
