@@ -1,8 +1,8 @@
 import api from '@/services/api'
 
 const state = {
-  cupons: [],
-  cupom: null,
+  coupons: [],
+  coupon: null,
   loading: false,
   error: null,
   pagination: {
@@ -11,32 +11,32 @@ const state = {
     total: 0
   },
   filters: {
-    tipo: '',
-    ator: '',
-    empresa: '',
-    ativo: '',
+    type: '',
+    actor: '',
+    company: '',
+    active: '',
     search: ''
   }
 }
 
 const mutations = {
-  SET_CUPONS(state, cupons) {
-    state.cupons = cupons
+  SET_COUPONS(state, coupons) {
+    state.coupons = coupons
   },
-  SET_CUPOM(state, cupom) {
-    state.cupom = cupom
+  SET_COUPON(state, coupon) {
+    state.coupon = coupon
   },
-  ADD_CUPOM(state, cupom) {
-    state.cupons.unshift(cupom)
+  ADD_COUPON(state, coupon) {
+    state.coupons.unshift(coupon)
   },
-  UPDATE_CUPOM(state, cupom) {
-    const index = state.cupons.findIndex(c => c.id === cupom.id)
+  UPDATE_COUPON(state, coupon) {
+    const index = state.coupons.findIndex(c => c.id === coupon.id)
     if (index !== -1) {
-      state.cupons.splice(index, 1, cupom)
+      state.coupons.splice(index, 1, coupon)
     }
   },
-  REMOVE_CUPOM(state, id) {
-    state.cupons = state.cupons.filter(c => c.id !== id)
+  REMOVE_COUPON(state, id) {
+    state.coupons = state.coupons.filter(c => c.id !== id)
   },
   SET_LOADING(state, loading) {
     state.loading = loading
@@ -53,7 +53,7 @@ const mutations = {
 }
 
 const actions = {
-  async fetchCupons({ commit, state }, params = {}) {
+  async fetchCoupons({ commit, state }, params = {}) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
@@ -64,16 +64,16 @@ const actions = {
         ...params
       }
       
-      // Remove parâmetros vazios
+      // Remove empty parameters
       Object.keys(queryParams).forEach(key => {
         if (queryParams[key] === '' || queryParams[key] === null) {
           delete queryParams[key]
         }
       })
       
-      const response = await api.get('/pagamentos/cupons/', { params: queryParams })
+      const response = await api.get('/payments/coupons/', { params: queryParams })
       
-      commit('SET_CUPONS', response.data.results || response.data)
+      commit('SET_COUPONS', response.data.results || response.data)
       
       if (response.data.count !== undefined) {
         commit('SET_PAGINATION', {
@@ -85,7 +85,7 @@ const actions = {
       
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar cupons'
+      const message = error.response?.data?.error || 'Error loading coupons'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -93,16 +93,16 @@ const actions = {
     }
   },
 
-  async fetchCupom({ commit }, id) {
+  async fetchCoupon({ commit }, id) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.get(`/pagamentos/cupons/${id}/`)
-      commit('SET_CUPOM', response.data)
+      const response = await api.get(`/payments/coupons/${id}/`)
+      commit('SET_COUPON', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar cupom'
+      const message = error.response?.data?.error || 'Error loading coupon'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -110,16 +110,16 @@ const actions = {
     }
   },
 
-  async createCupom({ commit }, cupomData) {
+  async createCoupon({ commit }, couponData) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.post('/pagamentos/cupons/', cupomData)
-      commit('ADD_CUPOM', response.data)
+      const response = await api.post('/payments/coupons/', couponData)
+      commit('ADD_COUPON', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao criar cupom'
+      const message = error.response?.data?.error || 'Error creating coupon'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -127,16 +127,16 @@ const actions = {
     }
   },
 
-  async updateCupom({ commit }, { id, data }) {
+  async updateCoupon({ commit }, { id, data }) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.patch(`/pagamentos/cupons/${id}/`, data)
-      commit('UPDATE_CUPOM', response.data)
+      const response = await api.patch(`/payments/coupons/${id}/`, data)
+      commit('UPDATE_COUPON', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao atualizar cupom'
+      const message = error.response?.data?.error || 'Error updating coupon'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -144,16 +144,16 @@ const actions = {
     }
   },
 
-  async deleteCupom({ commit }, id) {
+  async deleteCoupon({ commit }, id) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      await api.delete(`/pagamentos/cupons/${id}/`)
-      commit('REMOVE_CUPOM', id)
+      await api.delete(`/payments/coupons/${id}/`)
+      commit('REMOVE_COUPON', id)
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao excluir cupom'
+      const message = error.response?.data?.error || 'Error deleting coupon'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -161,15 +161,15 @@ const actions = {
     }
   },
 
-  async validarCupom({ commit }, codigo) {
+  async validateCoupon({ commit }, code) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.post('/pagamentos/cupons/validar/', { codigo })
+      const response = await api.post('/payments/coupons/validate/', { code })
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Cupom inválido'
+      const message = error.response?.data?.error || 'Invalid coupon'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -183,23 +183,23 @@ const actions = {
 }
 
 const getters = {
-  cupons: state => state.cupons,
-  cupom: state => state.cupom,
+  coupons: state => state.coupons,
+  coupon: state => state.coupon,
   loading: state => state.loading,
   error: state => state.error,
   pagination: state => state.pagination,
   filters: state => state.filters,
   
-  cuponsAtivos: state => {
-    return state.cupons.filter(c => c.ativo)
+  activeCoupons: state => {
+    return state.coupons.filter(c => c.active)
   },
   
-  cuponsPorTipo: state => tipo => {
-    return state.cupons.filter(c => c.tipo === tipo)
+  couponsByType: state => type => {
+    return state.coupons.filter(c => c.type === type)
   },
   
-  cuponsPorAtor: state => atorId => {
-    return state.cupons.filter(c => c.ator === atorId)
+  couponsByActor: state => actorId => {
+    return state.coupons.filter(c => c.actor === actorId)
   }
 }
 

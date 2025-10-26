@@ -1,24 +1,24 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import GoogleCalendarIntegration, GoogleCalendarEvent, GoogleCalendarSyncLog
-from apps.agendamentos.serializers import AgendamentoSerializer
-from apps.autenticacao.serializers import UsuarioSerializer
+from apps.appointments.serializers import AppointmentSerializer
+from apps.authentication.serializers import UserSerializer
 
 User = get_user_model()
 
 
 class GoogleCalendarIntegrationSerializer(serializers.ModelSerializer):
-    """Serializer para GoogleCalendarIntegration."""
+    """Serializer for GoogleCalendarIntegration."""
     
-    usuario_nome = serializers.CharField(source='usuario.username', read_only=True)
-    usuario_email = serializers.CharField(source='usuario.email', read_only=True)
+    user_name = serializers.CharField(source='user.username', read_only=True)
+    user_email = serializers.CharField(source='user.email', read_only=True)
     is_token_expired = serializers.BooleanField(read_only=True)
     needs_refresh = serializers.BooleanField(read_only=True)
     
     class Meta:
         model = GoogleCalendarIntegration
         fields = [
-            'id', 'usuario', 'usuario_nome', 'usuario_email',
+            'id', 'user', 'user_name', 'user_email',
             'calendar_id', 'sync_enabled', 'sync_direction',
             'notify_on_create', 'notify_on_update', 'notify_on_delete',
             'is_token_expired', 'needs_refresh', 'last_sync_at',
@@ -30,17 +30,17 @@ class GoogleCalendarIntegrationSerializer(serializers.ModelSerializer):
         ]
     
     def validate_sync_direction(self, value):
-        """Valida a direção de sincronização."""
+        """Validates sync direction."""
         valid_directions = ['bidirectional', 'to_google', 'from_google']
         if value not in valid_directions:
             raise serializers.ValidationError(
-                f"Direção deve ser uma das opções: {', '.join(valid_directions)}"
+                f"Direction must be one of: {', '.join(valid_directions)}"
             )
         return value
 
 
 class GoogleCalendarIntegrationCreateSerializer(serializers.ModelSerializer):
-    """Serializer para criação de integração Google Calendar."""
+    """Serializer for creating Google Calendar integration."""
     
     class Meta:
         model = GoogleCalendarIntegration
@@ -50,40 +50,40 @@ class GoogleCalendarIntegrationCreateSerializer(serializers.ModelSerializer):
         ]
     
     def create(self, validated_data):
-        """Cria uma nova integração."""
+        """Creates a new integration."""
         user = self.context['request'].user
-        validated_data['usuario'] = user
+        validated_data['user'] = user
         return super().create(validated_data)
 
 
 class GoogleCalendarEventSerializer(serializers.ModelSerializer):
-    """Serializer para GoogleCalendarEvent."""
+    """Serializer for GoogleCalendarEvent."""
     
-    agendamento_data = AgendamentoSerializer(source='agendamento', read_only=True)
-    cliente_nome = serializers.CharField(source='agendamento.cliente.username', read_only=True)
-    ator_nome = serializers.CharField(source='agendamento.ator.username', read_only=True)
-    servico_nome = serializers.CharField(source='agendamento.servico.nome', read_only=True)
+    appointment_data = AppointmentSerializer(source='appointment', read_only=True)
+    client_name = serializers.CharField(source='appointment.client.username', read_only=True)
+    actor_name = serializers.CharField(source='appointment.actor.username', read_only=True)
+    service_name = serializers.CharField(source='appointment.service.name', read_only=True)
     
     class Meta:
         model = GoogleCalendarEvent
         fields = [
-            'id', 'agendamento', 'agendamento_data',
+            'id', 'appointment', 'appointment_data',
             'google_event_id', 'google_calendar_id',
             'sync_status', 'sync_error',
-            'cliente_nome', 'ator_nome', 'servico_nome',
+            'client_name', 'actor_name', 'service_name',
             'created_at', 'updated_at', 'last_sync_at'
         ]
         read_only_fields = [
-            'id', 'agendamento_data', 'cliente_nome', 'ator_nome', 'servico_nome',
+            'id', 'appointment_data', 'client_name', 'actor_name', 'service_name',
             'created_at', 'updated_at', 'last_sync_at'
         ]
 
 
 class GoogleCalendarSyncLogSerializer(serializers.ModelSerializer):
-    """Serializer para GoogleCalendarSyncLog."""
+    """Serializer for GoogleCalendarSyncLog."""
     
-    integration_usuario = serializers.CharField(
-        source='integration.usuario.username', 
+    integration_user = serializers.CharField(
+        source='integration.user.username', 
         read_only=True
     )
     duration_display = serializers.SerializerMethodField()
@@ -92,18 +92,18 @@ class GoogleCalendarSyncLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoogleCalendarSyncLog
         fields = [
-            'id', 'integration', 'integration_usuario',
+            'id', 'integration', 'integration_user',
             'sync_type', 'status', 'error_message',
             'events_created', 'events_updated', 'events_deleted', 'events_conflicted',
             'events_summary', 'started_at', 'completed_at', 'duration_display'
         ]
         read_only_fields = [
-            'id', 'integration_usuario', 'events_summary', 'duration_display',
+            'id', 'integration_user', 'events_summary', 'duration_display',
             'started_at', 'completed_at'
         ]
     
     def get_duration_display(self, obj):
-        """Retorna a duração formatada."""
+        """Returns formatted duration."""
         if obj.duration_seconds:
             if obj.duration_seconds < 60:
                 return f"{obj.duration_seconds}s"
@@ -118,19 +118,19 @@ class GoogleCalendarSyncLogSerializer(serializers.ModelSerializer):
         return "-"
     
     def get_events_summary(self, obj):
-        """Retorna resumo dos eventos processados."""
+        """Returns summary of processed events."""
         total = obj.events_created + obj.events_updated + obj.events_deleted
-        return f"{total} eventos ({obj.events_created}C, {obj.events_updated}U, {obj.events_deleted}D)"
+        return f"{total} events ({obj.events_created}C, {obj.events_updated}U, {obj.events_deleted}D)"
 
 
 class GoogleCalendarOAuthSerializer(serializers.Serializer):
-    """Serializer para OAuth do Google Calendar."""
+    """Serializer for Google Calendar OAuth."""
     
     authorization_url = serializers.URLField(read_only=True)
     state = serializers.CharField(max_length=255, required=False)
     
     def create(self, validated_data):
-        """Cria URL de autorização OAuth."""
+        """Creates OAuth authorization URL."""
         from .services import GoogleCalendarOAuthService
         
         user = self.context['request'].user
@@ -142,25 +142,25 @@ class GoogleCalendarOAuthSerializer(serializers.Serializer):
 
 
 class GoogleCalendarOAuthCallbackSerializer(serializers.Serializer):
-    """Serializer para callback OAuth do Google Calendar."""
+    """Serializer for Google Calendar OAuth callback."""
     
     code = serializers.CharField(max_length=255)
     state = serializers.CharField(max_length=255, required=False)
     
     def validate(self, attrs):
-        """Valida os dados do callback."""
+        """Validates callback data."""
         if not attrs.get('code'):
-            raise serializers.ValidationError("Código de autorização é obrigatório")
+            raise serializers.ValidationError("Authorization code is required")
         return attrs
     
     def create(self, validated_data):
-        """Processa o callback OAuth."""
+        """Processes OAuth callback."""
         from .services import GoogleCalendarOAuthService
         
         user = self.context['request'].user
         code = validated_data['code']
         
-        # Simula a URL de callback completa
+        # Simulates complete callback URL
         authorization_response = f"http://localhost:8000/google-calendar/callback/?code={code}"
         
         integration = GoogleCalendarOAuthService.handle_authorization_callback(
@@ -171,13 +171,13 @@ class GoogleCalendarOAuthCallbackSerializer(serializers.Serializer):
 
 
 class GoogleCalendarSyncSerializer(serializers.Serializer):
-    """Serializer para sincronização com Google Calendar."""
+    """Serializer for Google Calendar synchronization."""
     
     sync_type = serializers.ChoiceField(
         choices=[
-            ('full', 'Sincronização Completa'),
-            ('incremental', 'Sincronização Incremental'),
-            ('manual', 'Sincronização Manual'),
+            ('full', 'Full Synchronization'),
+            ('incremental', 'Incremental Synchronization'),
+            ('manual', 'Manual Synchronization'),
         ],
         default='manual'
     )
@@ -185,67 +185,67 @@ class GoogleCalendarSyncSerializer(serializers.Serializer):
         min_value=1,
         max_value=365,
         default=30,
-        help_text="Número de dias para buscar no passado"
+        help_text="Number of days to search in the past"
     )
     days_forward = serializers.IntegerField(
         min_value=1,
         max_value=365,
         default=365,
-        help_text="Número de dias para buscar no futuro"
+        help_text="Number of days to search in the future"
     )
     
     def validate(self, attrs):
-        """Valida os dados de sincronização."""
+        """Validates synchronization data."""
         if attrs['days_back'] + attrs['days_forward'] > 400:
             raise serializers.ValidationError(
-                "A soma dos dias não pode ser maior que 400"
+                "Sum of days cannot be greater than 400"
             )
         return attrs
 
 
 class GoogleCalendarEventCreateSerializer(serializers.Serializer):
-    """Serializer para criar evento no Google Calendar."""
+    """Serializer for creating Google Calendar event."""
     
-    agendamento_id = serializers.IntegerField()
+    appointment_id = serializers.IntegerField()
     
-    def validate_agendamento_id(self, value):
-        """Valida se o agendamento existe e pertence ao usuário."""
-        from apps.agendamentos.models import Agendamento
+    def validate_appointment_id(self, value):
+        """Validates if appointment exists and belongs to user."""
+        from apps.appointments.models import Appointment
         
         try:
-            agendamento = Agendamento.objects.get(id=value)
-        except Agendamento.DoesNotExist:
-            raise serializers.ValidationError("Agendamento não encontrado")
+            appointment = Appointment.objects.get(id=value)
+        except Appointment.DoesNotExist:
+            raise serializers.ValidationError("Appointment not found")
         
-        # Verifica se o usuário tem permissão
+        # Checks if user has permission
         user = self.context['request'].user
-        if not (user == agendamento.ator or user.is_admin or user.is_superadmin):
-            raise serializers.ValidationError("Você não tem permissão para este agendamento")
+        if not (user == appointment.actor or user.is_admin or user.is_superadmin):
+            raise serializers.ValidationError("You don't have permission for this appointment")
         
         return value
     
     def create(self, validated_data):
-        """Cria evento no Google Calendar."""
+        """Creates Google Calendar event."""
         from .services import GoogleCalendarService
-        from apps.agendamentos.models import Agendamento
+        from apps.appointments.models import Appointment
         
-        agendamento = Agendamento.objects.get(id=validated_data['agendamento_id'])
+        appointment = Appointment.objects.get(id=validated_data['appointment_id'])
         user = self.context['request'].user
         
-        # Busca a integração do usuário
+        # Finds user integration
         try:
             integration = GoogleCalendarIntegration.objects.get(
-                usuario=user,
+                user=user,
                 sync_enabled=True
             )
         except GoogleCalendarIntegration.DoesNotExist:
             raise serializers.ValidationError(
-                "Integração com Google Calendar não encontrada ou desabilitada"
+                "Google Calendar integration not found or disabled"
             )
         
-        # Cria o serviço e o evento
+        # Creates service and event
         service = GoogleCalendarService(integration)
-        google_event = service.create_event(agendamento)
+        google_event = service.create_event(appointment)
         
         return GoogleCalendarEventSerializer(google_event).data
 

@@ -1,8 +1,8 @@
 import api from '@/services/api'
 
 const state = {
-  servicos: [],
-  servico: null,
+  services: [],
+  service: null,
   loading: false,
   error: null,
   pagination: {
@@ -11,31 +11,31 @@ const state = {
     total: 0
   },
   filters: {
-    ator: '',
-    empresa: '',
-    ativo: '',
+    actor: '',
+    company: '',
+    active: '',
     search: ''
   }
 }
 
 const mutations = {
-  SET_SERVICOS(state, servicos) {
-    state.servicos = servicos
+  SET_SERVICES(state, services) {
+    state.services = services
   },
-  SET_SERVICO(state, servico) {
-    state.servico = servico
+  SET_SERVICE(state, service) {
+    state.service = service
   },
-  ADD_SERVICO(state, servico) {
-    state.servicos.unshift(servico)
+  ADD_SERVICE(state, service) {
+    state.services.unshift(service)
   },
-  UPDATE_SERVICO(state, servico) {
-    const index = state.servicos.findIndex(s => s.id === servico.id)
+  UPDATE_SERVICE(state, service) {
+    const index = state.services.findIndex(s => s.id === service.id)
     if (index !== -1) {
-      state.servicos.splice(index, 1, servico)
+      state.services.splice(index, 1, service)
     }
   },
-  REMOVE_SERVICO(state, id) {
-    state.servicos = state.servicos.filter(s => s.id !== id)
+  REMOVE_SERVICE(state, id) {
+    state.services = state.services.filter(s => s.id !== id)
   },
   SET_LOADING(state, loading) {
     state.loading = loading
@@ -52,7 +52,7 @@ const mutations = {
 }
 
 const actions = {
-  async fetchServicos({ commit, state }, params = {}) {
+  async fetchServices({ commit, state }, params = {}) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
@@ -63,16 +63,16 @@ const actions = {
         ...params
       }
       
-      // Remove parâmetros vazios
+      // Remove empty parameters
       Object.keys(queryParams).forEach(key => {
         if (queryParams[key] === '' || queryParams[key] === null) {
           delete queryParams[key]
         }
       })
       
-      const response = await api.get('/agendamentos/servicos/', { params: queryParams })
+      const response = await api.get('/appointments/services/', { params: queryParams })
       
-      commit('SET_SERVICOS', response.data.results || response.data)
+      commit('SET_SERVICES', response.data.results || response.data)
       
       if (response.data.count !== undefined) {
         commit('SET_PAGINATION', {
@@ -84,7 +84,7 @@ const actions = {
       
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar serviços'
+      const message = error.response?.data?.error || 'Error loading services'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -92,16 +92,16 @@ const actions = {
     }
   },
 
-  async fetchServico({ commit }, id) {
+  async fetchService({ commit }, id) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.get(`/agendamentos/servicos/${id}/`)
-      commit('SET_SERVICO', response.data)
+      const response = await api.get(`/appointments/services/${id}/`)
+      commit('SET_SERVICE', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar serviço'
+      const message = error.response?.data?.error || 'Error loading service'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -109,16 +109,16 @@ const actions = {
     }
   },
 
-  async createServico({ commit }, servicoData) {
+  async createService({ commit }, serviceData) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.post('/agendamentos/servicos/', servicoData)
-      commit('ADD_SERVICO', response.data)
+      const response = await api.post('/appointments/services/', serviceData)
+      commit('ADD_SERVICE', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao criar serviço'
+      const message = error.response?.data?.error || 'Error creating service'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -126,16 +126,16 @@ const actions = {
     }
   },
 
-  async updateServico({ commit }, { id, data }) {
+  async updateService({ commit }, { id, data }) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.patch(`/agendamentos/servicos/${id}/`, data)
-      commit('UPDATE_SERVICO', response.data)
+      const response = await api.patch(`/appointments/services/${id}/`, data)
+      commit('UPDATE_SERVICE', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao atualizar serviço'
+      const message = error.response?.data?.error || 'Error updating service'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -143,16 +143,16 @@ const actions = {
     }
   },
 
-  async deleteServico({ commit }, id) {
+  async deleteService({ commit }, id) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      await api.delete(`/agendamentos/servicos/${id}/`)
-      commit('REMOVE_SERVICO', id)
+      await api.delete(`/appointments/services/${id}/`)
+      commit('REMOVE_SERVICE', id)
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao excluir serviço'
+      const message = error.response?.data?.error || 'Error deleting service'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -160,17 +160,17 @@ const actions = {
     }
   },
 
-  async fetchServicosPorAtor({ commit }, atorId) {
+  async fetchServicesByActor({ commit }, actorId) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.get('/agendamentos/servicos/por_ator/', {
-        params: { ator_id: atorId }
+      const response = await api.get('/appointments/services/by_actor/', {
+        params: { actor_id: actorId }
       })
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar serviços do ator'
+      const message = error.response?.data?.error || 'Error loading actor services'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -184,23 +184,23 @@ const actions = {
 }
 
 const getters = {
-  servicos: state => state.servicos,
-  servico: state => state.servico,
+  services: state => state.services,
+  service: state => state.service,
   loading: state => state.loading,
   error: state => state.error,
   pagination: state => state.pagination,
   filters: state => state.filters,
   
-  servicosAtivos: state => {
-    return state.servicos.filter(s => s.ativo)
+  activeServices: state => {
+    return state.services.filter(s => s.active)
   },
   
-  servicosPorAtor: state => atorId => {
-    return state.servicos.filter(s => s.ator === atorId)
+  servicesByActor: state => actorId => {
+    return state.services.filter(s => s.actor === actorId)
   },
   
-  servicosPorEmpresa: state => empresaId => {
-    return state.servicos.filter(s => s.empresa === empresaId)
+  servicesByCompany: state => companyId => {
+    return state.services.filter(s => s.company === companyId)
   }
 }
 

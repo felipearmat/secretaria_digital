@@ -2,10 +2,10 @@ import { format, parseISO, isValid, addDays, subDays, startOfDay, endOfDay, isTo
 import { ptBR } from 'date-fns/locale'
 
 /**
- * Formata uma data para exibição
- * @param {Date|string} date - Data para formatar
- * @param {string} formatString - String de formatação
- * @returns {string} Data formatada
+ * Formats a date for display
+ * @param {Date|string} date - Date to format
+ * @param {string} formatString - Format string
+ * @returns {string} Formatted date
  */
 export function formatDate(date, formatString = 'dd/MM/yyyy') {
   if (!date) return ''
@@ -19,52 +19,52 @@ export function formatDate(date, formatString = 'dd/MM/yyyy') {
     
     return format(dateObj, formatString, { locale: ptBR })
   } catch (error) {
-    console.error('Erro ao formatar data:', error)
+    console.error('Error formatting date:', error)
     return ''
   }
 }
 
 /**
- * Formata uma data e hora para exibição
- * @param {Date|string} date - Data para formatar
- * @param {string} formatString - String de formatação
- * @returns {string} Data e hora formatada
+ * Formats a date and time for display
+ * @param {Date|string} date - Date to format
+ * @param {string} formatString - Format string
+ * @returns {string} Formatted date and time
  */
 export function formatDateTime(date, formatString = 'dd/MM/yyyy HH:mm') {
   return formatDate(date, formatString)
 }
 
 /**
- * Formata apenas a hora
- * @param {Date|string} date - Data para formatar
- * @returns {string} Hora formatada
+ * Formats only the time
+ * @param {Date|string} date - Date to format
+ * @returns {string} Formatted time
  */
 export function formatTime(date) {
   return formatDate(date, 'HH:mm')
 }
 
 /**
- * Formata data para input de data
- * @param {Date|string} date - Data para formatar
- * @returns {string} Data no formato YYYY-MM-DD
+ * Formats date for date input
+ * @param {Date|string} date - Date to format
+ * @returns {string} Date in YYYY-MM-DD format
  */
 export function formatDateForInput(date) {
   return formatDate(date, 'yyyy-MM-dd')
 }
 
 /**
- * Formata data e hora para input datetime-local
- * @param {Date|string} date - Data para formatar
- * @returns {string} Data e hora no formato YYYY-MM-DDTHH:mm
+ * Formats date and time for datetime-local input
+ * @param {Date|string} date - Date to format
+ * @returns {string} Date and time in YYYY-MM-DDTHH:mm format
  */
 export function formatDateTimeForInput(date) {
   return formatDate(date, "yyyy-MM-dd'T'HH:mm")
 }
 
 /**
- * Verifica se uma data é hoje
- * @param {Date|string} date - Data para verificar
- * @returns {boolean} True se for hoje
+ * Checks if a date is today
+ * @param {Date|string} date - Date to check
+ * @returns {boolean} True if it's today
  */
 export function isTodayDate(date) {
   if (!date) return false
@@ -78,9 +78,9 @@ export function isTodayDate(date) {
 }
 
 /**
- * Verifica se uma data é amanhã
- * @param {Date|string} date - Data para verificar
- * @returns {boolean} True se for amanhã
+ * Checks if a date is tomorrow
+ * @param {Date|string} date - Date to check
+ * @returns {boolean} True if it's tomorrow
  */
 export function isTomorrowDate(date) {
   if (!date) return false
@@ -94,9 +94,9 @@ export function isTomorrowDate(date) {
 }
 
 /**
- * Verifica se uma data é ontem
- * @param {Date|string} date - Data para verificar
- * @returns {boolean} True se for ontem
+ * Checks if a date is yesterday
+ * @param {Date|string} date - Date to check
+ * @returns {boolean} True if it's yesterday
  */
 export function isYesterdayDate(date) {
   if (!date) return false
@@ -110,9 +110,9 @@ export function isYesterdayDate(date) {
 }
 
 /**
- * Verifica se uma data é desta semana
- * @param {Date|string} date - Data para verificar
- * @returns {boolean} True se for desta semana
+ * Checks if a date is this week
+ * @param {Date|string} date - Date to check
+ * @returns {boolean} True if it's this week
  */
 export function isThisWeekDate(date) {
   if (!date) return false
@@ -126,9 +126,9 @@ export function isThisWeekDate(date) {
 }
 
 /**
- * Verifica se uma data é deste mês
- * @param {Date|string} date - Data para verificar
- * @returns {boolean} True se for deste mês
+ * Checks if a date is this month
+ * @param {Date|string} date - Date to check
+ * @returns {boolean} True if it's this month
  */
 export function isThisMonthDate(date) {
   if (!date) return false
@@ -142,9 +142,9 @@ export function isThisMonthDate(date) {
 }
 
 /**
- * Verifica se uma data é deste ano
- * @param {Date|string} date - Data para verificar
- * @returns {boolean} True se for deste ano
+ * Checks if a date is this year
+ * @param {Date|string} date - Date to check
+ * @returns {boolean} True if it's this year
  */
 export function isThisYearDate(date) {
   if (!date) return false
@@ -158,45 +158,45 @@ export function isThisYearDate(date) {
 }
 
 /**
- * Retorna uma descrição relativa da data
- * @param {Date|string} date - Data para descrever
- * @returns {string} Descrição relativa
+ * Returns a relative description of the date
+ * @param {Date|string} date - Date to describe
+ * @returns {string} Relative description
  */
 export function getRelativeDateDescription(date) {
   if (!date) return ''
   
   if (isTodayDate(date)) {
-    return 'Hoje'
+    return 'Today'
   }
   
   if (isTomorrowDate(date)) {
-    return 'Amanhã'
+    return 'Tomorrow'
   }
   
   if (isYesterdayDate(date)) {
-    return 'Ontem'
+    return 'Yesterday'
   }
   
   if (isThisWeekDate(date)) {
-    return 'Esta semana'
+    return 'This week'
   }
   
   if (isThisMonthDate(date)) {
-    return 'Este mês'
+    return 'This month'
   }
   
   if (isThisYearDate(date)) {
-    return 'Este ano'
+    return 'This year'
   }
   
   return formatDate(date)
 }
 
 /**
- * Adiciona dias a uma data
- * @param {Date|string} date - Data base
- * @param {number} days - Número de dias para adicionar
- * @returns {Date} Nova data
+ * Adds days to a date
+ * @param {Date|string} date - Base date
+ * @param {number} days - Number of days to add
+ * @returns {Date} New date
  */
 export function addDaysToDate(date, days) {
   if (!date) return new Date()
@@ -210,10 +210,10 @@ export function addDaysToDate(date, days) {
 }
 
 /**
- * Subtrai dias de uma data
- * @param {Date|string} date - Data base
- * @param {number} days - Número de dias para subtrair
- * @returns {Date} Nova data
+ * Subtracts days from a date
+ * @param {Date|string} date - Base date
+ * @param {number} days - Number of days to subtract
+ * @returns {Date} New date
  */
 export function subDaysFromDate(date, days) {
   if (!date) return new Date()
@@ -227,9 +227,9 @@ export function subDaysFromDate(date, days) {
 }
 
 /**
- * Retorna o início do dia
- * @param {Date|string} date - Data base
- * @returns {Date} Início do dia
+ * Returns the start of the day
+ * @param {Date|string} date - Base date
+ * @returns {Date} Start of day
  */
 export function getStartOfDay(date) {
   if (!date) return new Date()
@@ -243,9 +243,9 @@ export function getStartOfDay(date) {
 }
 
 /**
- * Retorna o fim do dia
- * @param {Date|string} date - Data base
- * @returns {Date} Fim do dia
+ * Returns the end of the day
+ * @param {Date|string} date - Base date
+ * @returns {Date} End of day
  */
 export function getEndOfDay(date) {
   if (!date) return new Date()
@@ -259,10 +259,10 @@ export function getEndOfDay(date) {
 }
 
 /**
- * Gera um array de datas para um período
- * @param {Date|string} startDate - Data de início
- * @param {Date|string} endDate - Data de fim
- * @returns {Date[]} Array de datas
+ * Generates an array of dates for a period
+ * @param {Date|string} startDate - Start date
+ * @param {Date|string} endDate - End date
+ * @returns {Date[]} Array of dates
  */
 export function generateDateRange(startDate, endDate) {
   if (!startDate || !endDate) return []
@@ -286,10 +286,10 @@ export function generateDateRange(startDate, endDate) {
 }
 
 /**
- * Verifica se duas datas são iguais (ignorando horário)
- * @param {Date|string} date1 - Primeira data
- * @param {Date|string} date2 - Segunda data
- * @returns {boolean} True se as datas forem iguais
+ * Checks if two dates are equal (ignoring time)
+ * @param {Date|string} date1 - First date
+ * @param {Date|string} date2 - Second date
+ * @returns {boolean} True if dates are equal
  */
 export function isSameDate(date1, date2) {
   if (!date1 || !date2) return false
@@ -305,16 +305,16 @@ export function isSameDate(date1, date2) {
 }
 
 /**
- * Retorna a data atual no formato YYYY-MM-DD
- * @returns {string} Data atual
+ * Returns current date in YYYY-MM-DD format
+ * @returns {string} Current date
  */
 export function getCurrentDate() {
   return formatDateForInput(new Date())
 }
 
 /**
- * Retorna a data e hora atuais no formato YYYY-MM-DDTHH:mm
- * @returns {string} Data e hora atuais
+ * Returns current date and time in YYYY-MM-DDTHH:mm format
+ * @returns {string} Current date and time
  */
 export function getCurrentDateTime() {
   return formatDateTimeForInput(new Date())

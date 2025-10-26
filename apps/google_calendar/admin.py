@@ -8,34 +8,34 @@ from .models import GoogleCalendarIntegration, GoogleCalendarEvent, GoogleCalend
 @admin.register(GoogleCalendarIntegration)
 class GoogleCalendarIntegrationAdmin(admin.ModelAdmin):
     list_display = [
-        'usuario', 'sync_enabled', 'sync_direction', 
+        'user', 'sync_enabled', 'sync_direction', 
         'last_sync_at', 'is_token_expired', 'created_at'
     ]
     list_filter = [
         'sync_enabled', 'sync_direction', 'created_at', 'last_sync_at'
     ]
-    search_fields = ['usuario__username', 'usuario__email', 'calendar_id']
+    search_fields = ['user__username', 'user__email', 'calendar_id']
     readonly_fields = ['created_at', 'updated_at', 'last_sync_at']
     
     fieldsets = (
-        ('Usuário', {
-            'fields': ('usuario',)
+        ('User', {
+            'fields': ('user',)
         }),
-        ('Credenciais OAuth', {
+        ('OAuth Credentials', {
             'fields': ('access_token', 'refresh_token', 'token_expires_at'),
             'classes': ('collapse',)
         }),
-        ('Configurações de Sincronização', {
+        ('Synchronization Settings', {
             'fields': (
                 'calendar_id', 'sync_enabled', 'sync_direction'
             )
         }),
-        ('Configurações de Notificação', {
+        ('Notification Settings', {
             'fields': (
                 'notify_on_create', 'notify_on_update', 'notify_on_delete'
             )
         }),
-        ('Metadados', {
+        ('Metadata', {
             'fields': ('created_at', 'updated_at', 'last_sync_at'),
             'classes': ('collapse',)
         })
@@ -44,10 +44,10 @@ class GoogleCalendarIntegrationAdmin(admin.ModelAdmin):
     def is_token_expired(self, obj):
         if obj.is_token_expired:
             return format_html(
-                '<span style="color: red;">Expirado</span>'
+                '<span style="color: red;">Expired</span>'
             )
         return format_html(
-            '<span style="color: green;">Válido</span>'
+            '<span style="color: green;">Valid</span>'
         )
     is_token_expired.short_description = 'Token Status'
     is_token_expired.boolean = True
@@ -56,28 +56,28 @@ class GoogleCalendarIntegrationAdmin(admin.ModelAdmin):
 @admin.register(GoogleCalendarEvent)
 class GoogleCalendarEventAdmin(admin.ModelAdmin):
     list_display = [
-        'agendamento', 'google_event_id', 'sync_status', 
+        'appointment', 'google_event_id', 'sync_status', 
         'last_sync_at', 'created_at'
     ]
     list_filter = ['sync_status', 'created_at', 'last_sync_at']
     search_fields = [
-        'agendamento__cliente__username', 
-        'agendamento__ator__username',
+        'appointment__client__username', 
+        'appointment__actor__username',
         'google_event_id'
     ]
     readonly_fields = ['created_at', 'updated_at', 'last_sync_at']
     
     fieldsets = (
-        ('Agendamento', {
-            'fields': ('agendamento',)
+        ('Appointment', {
+            'fields': ('appointment',)
         }),
         ('Google Calendar', {
             'fields': ('google_event_id', 'google_calendar_id')
         }),
-        ('Sincronização', {
+        ('Synchronization', {
             'fields': ('sync_status', 'sync_error')
         }),
-        ('Metadados', {
+        ('Metadata', {
             'fields': ('created_at', 'updated_at', 'last_sync_at'),
             'classes': ('collapse',)
         })
@@ -85,7 +85,7 @@ class GoogleCalendarEventAdmin(admin.ModelAdmin):
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related(
-            'agendamento__cliente', 'agendamento__ator'
+            'appointment__client', 'appointment__actor'
         )
 
 
@@ -96,7 +96,7 @@ class GoogleCalendarSyncLogAdmin(admin.ModelAdmin):
         'started_at', 'duration_display'
     ]
     list_filter = ['sync_type', 'status', 'started_at']
-    search_fields = ['integration__usuario__username']
+    search_fields = ['integration__user__username']
     readonly_fields = [
         'started_at', 'completed_at', 'duration_seconds',
         'events_created', 'events_updated', 'events_deleted', 'events_conflicted'
@@ -104,26 +104,26 @@ class GoogleCalendarSyncLogAdmin(admin.ModelAdmin):
     date_hierarchy = 'started_at'
     
     fieldsets = (
-        ('Integração', {
+        ('Integration', {
             'fields': ('integration',)
         }),
-        ('Detalhes da Sincronização', {
+        ('Synchronization Details', {
             'fields': ('sync_type', 'status', 'error_message')
         }),
-        ('Resultados', {
+        ('Results', {
             'fields': (
                 'events_created', 'events_updated', 'events_deleted', 'events_conflicted'
             )
         }),
-        ('Tempo', {
+        ('Time', {
             'fields': ('started_at', 'completed_at', 'duration_seconds')
         })
     )
     
     def events_summary(self, obj):
         total = obj.events_created + obj.events_updated + obj.events_deleted
-        return f"{total} eventos ({obj.events_created}C, {obj.events_updated}U, {obj.events_deleted}D)"
-    events_summary.short_description = 'Resumo dos Eventos'
+        return f"{total} events ({obj.events_created}C, {obj.events_updated}U, {obj.events_deleted}D)"
+    events_summary.short_description = 'Events Summary'
     
     def duration_display(self, obj):
         if obj.duration_seconds:
@@ -136,10 +136,10 @@ class GoogleCalendarSyncLogAdmin(admin.ModelAdmin):
                 minutes = (obj.duration_seconds % 3600) // 60
                 return f"{hours}h {minutes}m"
         return "-"
-    duration_display.short_description = 'Duração'
+    duration_display.short_description = 'Duration'
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related(
-            'integration__usuario'
+            'integration__user'
         )
 

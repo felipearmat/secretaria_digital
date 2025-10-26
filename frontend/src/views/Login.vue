@@ -14,7 +14,7 @@
                     Secretaria Virtual
                   </h1>
                   <p class="text-subtitle1 text-grey-darken-1 mt-2">
-                    Sistema de Agendamentos e Gestão
+                    Appointment and Management System
                   </p>
                 </div>
               </v-card-title>
@@ -124,7 +124,7 @@
 
             <div class="text-center mt-6">
               <p class="text-body2 text-grey-darken-1">
-                Não tem uma conta?
+                Don't have an account?
                 <v-btn
                   variant="text"
                   color="primary"
@@ -158,12 +158,12 @@ export default {
         rememberMe: false
       },
       emailRules: [
-        v => !!v || 'E-mail é obrigatório',
-        v => /.+@.+\..+/.test(v) || 'E-mail deve ser válido'
+        v => !!v || 'Email is required',
+        v => /.+@.+\..+/.test(v) || 'Email must be valid'
       ],
       passwordRules: [
-        v => !!v || 'Senha é obrigatória',
-        v => v.length >= 6 || 'Senha deve ter pelo menos 6 caracteres'
+        v => !!v || 'Password is required',
+        v => v.length >= 6 || 'Password must have at least 6 characters'
       ]
     }
   },

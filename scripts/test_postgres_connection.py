@@ -54,8 +54,8 @@ def test_models():
     print("🔍 Testing model operations...")
     
     try:
-        from apps.empresas.models import Company
-        from apps.autenticacao.models import User
+        from apps.companies.models import Company
+        from apps.authentication.models import User
         
         # Test model creation
         company = Company.objects.create(

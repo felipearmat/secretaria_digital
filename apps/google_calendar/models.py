@@ -1,264 +1,264 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from apps.agendamentos.models import Agendamento
-from apps.autenticacao.models import Usuario
+from apps.appointments.models import Appointment
+from apps.authentication.models import User
 
 User = get_user_model()
 
 
 class GoogleCalendarIntegration(models.Model):
     """
-    Modelo para armazenar as configurações de integração com Google Calendar
-    de cada usuário/ator.
+    Model to store Google Calendar integration settings
+    for each user/actor.
     """
-    usuario = models.OneToOneField(
-        Usuario,
+    user = models.OneToOneField(
+        User,
         on_delete=models.CASCADE,
         related_name='google_calendar_integration',
-        verbose_name='Usuário'
+        verbose_name='User'
     )
     
-    # Credenciais OAuth
+    # OAuth credentials
     access_token = models.TextField(
         verbose_name='Access Token',
-        help_text='Token de acesso do Google OAuth'
+        help_text='Google OAuth access token'
     )
     refresh_token = models.TextField(
         verbose_name='Refresh Token',
-        help_text='Token de renovação do Google OAuth'
+        help_text='Google OAuth refresh token'
     )
     token_expires_at = models.DateTimeField(
-        verbose_name='Token Expira Em',
-        help_text='Data e hora de expiração do token'
+        verbose_name='Token Expires At',
+        help_text='Token expiration date and time'
     )
     
-    # Configurações de sincronização
+    # Synchronization settings
     calendar_id = models.CharField(
         max_length=255,
-        verbose_name='ID do Calendário',
-        help_text='ID do calendário do Google Calendar',
+        verbose_name='Calendar ID',
+        help_text='Google Calendar calendar ID',
         default='primary'
     )
     sync_enabled = models.BooleanField(
         default=True,
-        verbose_name='Sincronização Habilitada',
-        help_text='Se a sincronização com Google Calendar está ativa'
+        verbose_name='Sync Enabled',
+        help_text='Whether Google Calendar synchronization is active'
     )
     sync_direction = models.CharField(
         max_length=20,
         choices=[
-            ('bidirectional', 'Bidirecional'),
-            ('to_google', 'Para Google'),
-            ('from_google', 'Do Google'),
+            ('bidirectional', 'Bidirectional'),
+            ('to_google', 'To Google'),
+            ('from_google', 'From Google'),
         ],
         default='bidirectional',
-        verbose_name='Direção da Sincronização',
-        help_text='Direção da sincronização dos eventos'
+        verbose_name='Sync Direction',
+        help_text='Event synchronization direction'
     )
     
-    # Configurações de notificação
+    # Notification settings
     notify_on_create = models.BooleanField(
         default=True,
-        verbose_name='Notificar ao Criar',
-        help_text='Enviar notificação quando criar evento no Google Calendar'
+        verbose_name='Notify on Create',
+        help_text='Send notification when creating event in Google Calendar'
     )
     notify_on_update = models.BooleanField(
         default=True,
-        verbose_name='Notificar ao Atualizar',
-        help_text='Enviar notificação quando atualizar evento no Google Calendar'
+        verbose_name='Notify on Update',
+        help_text='Send notification when updating event in Google Calendar'
     )
     notify_on_delete = models.BooleanField(
         default=True,
-        verbose_name='Notificar ao Excluir',
-        help_text='Enviar notificação quando excluir evento no Google Calendar'
+        verbose_name='Notify on Delete',
+        help_text='Send notification when deleting event in Google Calendar'
     )
     
-    # Metadados
+    # Metadata
     created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Criado em'
+        verbose_name='Created at'
     )
     updated_at = models.DateTimeField(
         auto_now=True,
-        verbose_name='Atualizado em'
+        verbose_name='Updated at'
     )
     last_sync_at = models.DateTimeField(
         null=True,
         blank=True,
-        verbose_name='Última Sincronização',
-        help_text='Data e hora da última sincronização'
+        verbose_name='Last Sync At',
+        help_text='Date and time of last synchronization'
     )
     
     class Meta:
-        verbose_name = 'Integração Google Calendar'
-        verbose_name_plural = 'Integrações Google Calendar'
+        verbose_name = 'Google Calendar Integration'
+        verbose_name_plural = 'Google Calendar Integrations'
         db_table = 'google_calendar_integration'
     
     def __str__(self):
-        return f"Google Calendar - {self.usuario.username}"
+        return f"Google Calendar - {self.user.username}"
     
     @property
     def is_token_expired(self):
-        """Verifica se o token de acesso expirou."""
+        """Checks if the access token has expired."""
         if not self.token_expires_at:
             return True
         return timezone.now() >= self.token_expires_at
     
     def needs_refresh(self):
-        """Verifica se o token precisa ser renovado."""
+        """Checks if the token needs to be renewed."""
         if not self.token_expires_at:
             return True
-        # Renova se expira em menos de 5 minutos
+        # Renew if expires in less than 5 minutes
         return timezone.now() >= (self.token_expires_at - timezone.timedelta(minutes=5))
 
 
 class GoogleCalendarEvent(models.Model):
     """
-    Modelo para armazenar o mapeamento entre agendamentos e eventos do Google Calendar.
+    Model to store the mapping between appointments and Google Calendar events.
     """
-    agendamento = models.OneToOneField(
-        Agendamento,
+    appointment = models.OneToOneField(
+        Appointment,
         on_delete=models.CASCADE,
         related_name='google_calendar_event',
-        verbose_name='Agendamento'
+        verbose_name='Appointment'
     )
     
-    # IDs do Google Calendar
+    # Google Calendar IDs
     google_event_id = models.CharField(
         max_length=255,
-        verbose_name='ID do Evento Google',
-        help_text='ID do evento no Google Calendar'
+        verbose_name='Google Event ID',
+        help_text='Event ID in Google Calendar'
     )
     google_calendar_id = models.CharField(
         max_length=255,
-        verbose_name='ID do Calendário Google',
-        help_text='ID do calendário onde o evento foi criado'
+        verbose_name='Google Calendar ID',
+        help_text='Calendar ID where the event was created'
     )
     
-    # Status de sincronização
+    # Synchronization status
     sync_status = models.CharField(
         max_length=20,
         choices=[
-            ('synced', 'Sincronizado'),
-            ('pending', 'Pendente'),
-            ('error', 'Erro'),
-            ('conflict', 'Conflito'),
+            ('synced', 'Synced'),
+            ('pending', 'Pending'),
+            ('error', 'Error'),
+            ('conflict', 'Conflict'),
         ],
         default='synced',
-        verbose_name='Status da Sincronização'
+        verbose_name='Sync Status'
     )
     sync_error = models.TextField(
         blank=True,
         null=True,
-        verbose_name='Erro de Sincronização',
-        help_text='Mensagem de erro em caso de falha na sincronização'
+        verbose_name='Sync Error',
+        help_text='Error message in case of synchronization failure'
     )
     
-    # Metadados
+    # Metadata
     created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Criado em'
+        verbose_name='Created at'
     )
     updated_at = models.DateTimeField(
         auto_now=True,
-        verbose_name='Atualizado em'
+        verbose_name='Updated at'
     )
     last_sync_at = models.DateTimeField(
         auto_now=True,
-        verbose_name='Última Sincronização'
+        verbose_name='Last Sync At'
     )
     
     class Meta:
-        verbose_name = 'Evento Google Calendar'
-        verbose_name_plural = 'Eventos Google Calendar'
+        verbose_name = 'Google Calendar Event'
+        verbose_name_plural = 'Google Calendar Events'
         db_table = 'google_calendar_event'
         unique_together = ['google_event_id', 'google_calendar_id']
     
     def __str__(self):
-        return f"Google Event {self.google_event_id} - {self.agendamento}"
+        return f"Google Event {self.google_event_id} - {self.appointment}"
 
 
 class GoogleCalendarSyncLog(models.Model):
     """
-    Modelo para armazenar logs de sincronização com Google Calendar.
+    Model to store Google Calendar synchronization logs.
     """
     integration = models.ForeignKey(
         GoogleCalendarIntegration,
         on_delete=models.CASCADE,
         related_name='sync_logs',
-        verbose_name='Integração'
+        verbose_name='Integration'
     )
     
-    # Detalhes da sincronização
+    # Synchronization details
     sync_type = models.CharField(
         max_length=20,
         choices=[
-            ('full', 'Sincronização Completa'),
-            ('incremental', 'Sincronização Incremental'),
-            ('manual', 'Sincronização Manual'),
-            ('automatic', 'Sincronização Automática'),
+            ('full', 'Full Synchronization'),
+            ('incremental', 'Incremental Synchronization'),
+            ('manual', 'Manual Synchronization'),
+            ('automatic', 'Automatic Synchronization'),
         ],
-        verbose_name='Tipo de Sincronização'
+        verbose_name='Sync Type'
     )
     
-    # Resultados
+    # Results
     events_created = models.PositiveIntegerField(
         default=0,
-        verbose_name='Eventos Criados'
+        verbose_name='Events Created'
     )
     events_updated = models.PositiveIntegerField(
         default=0,
-        verbose_name='Eventos Atualizados'
+        verbose_name='Events Updated'
     )
     events_deleted = models.PositiveIntegerField(
         default=0,
-        verbose_name='Eventos Excluídos'
+        verbose_name='Events Deleted'
     )
     events_conflicted = models.PositiveIntegerField(
         default=0,
-        verbose_name='Eventos em Conflito'
+        verbose_name='Events in Conflict'
     )
     
     # Status
     status = models.CharField(
         max_length=20,
         choices=[
-            ('success', 'Sucesso'),
-            ('error', 'Erro'),
-            ('partial', 'Parcial'),
+            ('success', 'Success'),
+            ('error', 'Error'),
+            ('partial', 'Partial'),
         ],
         verbose_name='Status'
     )
     error_message = models.TextField(
         blank=True,
         null=True,
-        verbose_name='Mensagem de Erro'
+        verbose_name='Error Message'
     )
     
-    # Metadados
+    # Metadata
     started_at = models.DateTimeField(
-        verbose_name='Iniciado em'
+        verbose_name='Started at'
     )
     completed_at = models.DateTimeField(
         null=True,
         blank=True,
-        verbose_name='Concluído em'
+        verbose_name='Completed at'
     )
     duration_seconds = models.PositiveIntegerField(
         null=True,
         blank=True,
-        verbose_name='Duração (segundos)'
+        verbose_name='Duration (seconds)'
     )
     
     class Meta:
-        verbose_name = 'Log de Sincronização Google Calendar'
-        verbose_name_plural = 'Logs de Sincronização Google Calendar'
+        verbose_name = 'Google Calendar Sync Log'
+        verbose_name_plural = 'Google Calendar Sync Logs'
         db_table = 'google_calendar_sync_log'
         ordering = ['-started_at']
     
     def __str__(self):
-        return f"Sync Log {self.id} - {self.integration.usuario.username}"
+        return f"Sync Log {self.id} - {self.integration.user.username}"
     
     def save(self, *args, **kwargs):
         if self.completed_at and self.started_at:

@@ -3,7 +3,7 @@ import { useToast } from 'vue-toastification'
 
 const toast = useToast()
 
-// Configuração base do axios
+// Base axios configuration
 const api = axios.create({
   baseURL: process.env.VUE_APP_API_URL || '/api',
   timeout: 10000,
@@ -12,16 +12,16 @@ const api = axios.create({
   }
 })
 
-// Interceptor para requisições
+// Request interceptor
 api.interceptors.request.use(
   (config) => {
-    // Adiciona token de autenticação se disponível
+    // Add authentication token if available
     const token = localStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Token ${token}`
     }
     
-    // Log da requisição em desenvolvimento
+    // Request log in development
     if (process.env.NODE_ENV === 'development') {
       console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`, config.data)
     }
@@ -29,7 +29,7 @@ api.interceptors.request.use(
     return config
   },
   (error) => {
-    console.error('[API] Erro na requisição:', error)
+    console.error('[API] Request error:', error)
     return Promise.reject(error)
   }
 )
@@ -47,27 +47,27 @@ api.interceptors.response.use(
   (error) => {
     console.error('[API] Erro na resposta:', error)
     
-    // Tratamento de erros específicos
+    // Specific error handling
     if (error.response) {
       const { status, data } = error.response
       
       switch (status) {
         case 401:
-          // Token expirado ou inválido
+          // Expired or invalid token
           localStorage.removeItem('token')
           window.location.href = '/login'
           break
           
         case 403:
-          toast.error('Acesso negado. Você não tem permissão para esta ação.')
+          toast.error('Access denied. You do not have permission for this action.')
           break
           
         case 404:
-          toast.error('Recurso não encontrado.')
+          toast.error('Resource not found.')
           break
           
         case 422:
-          // Erro de validação
+          // Validation error
           if (data.errors) {
             Object.values(data.errors).forEach(errorList => {
               if (Array.isArray(errorList)) {
@@ -94,7 +94,7 @@ api.interceptors.response.use(
       }
     } else if (error.request) {
       // Erro de rede
-      toast.error('Erro de conexão. Verifique sua internet.')
+      toast.error('Connection error. Check your internet.')
     } else {
       // Outros erros
       toast.error('Ocorreu um erro inesperado.')
@@ -104,7 +104,7 @@ api.interceptors.response.use(
   }
 )
 
-// Métodos auxiliares
+// Helper methods
 export const apiHelpers = {
   // Upload de arquivo
   async uploadFile(file, endpoint = '/upload/') {
@@ -135,7 +135,7 @@ export const apiHelpers = {
     window.URL.revokeObjectURL(downloadUrl)
   },
   
-  // Paginação
+  // Pagination
   buildPaginationParams(page = 1, pageSize = 20, filters = {}) {
     return {
       page,
@@ -144,16 +144,16 @@ export const apiHelpers = {
     }
   },
   
-  // Filtros de data
-  buildDateFilters(dataInicio, dataFim) {
+  // Date filters
+  buildDateFilters(startDate, endDate) {
     const filters = {}
     
-    if (dataInicio) {
-      filters.data_inicio = dataInicio
+    if (startDate) {
+      filters.start_date = startDate
     }
     
-    if (dataFim) {
-      filters.data_fim = dataFim
+    if (endDate) {
+      filters.end_date = endDate
     }
     
     return filters

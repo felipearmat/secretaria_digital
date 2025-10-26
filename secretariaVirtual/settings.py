@@ -44,11 +44,11 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    'apps.empresas',
-    'apps.autenticacao',
-    'apps.agendamentos',
-    'apps.notificacoes',
-    'apps.pagamentos',
+    'apps.companies',
+    'apps.authentication',
+    'apps.appointments',
+    'apps.notifications',
+    # 'apps.payments',  # Temporarily disabled
     'apps.google_calendar',
     'apps.feature_flags',
 ]
@@ -99,7 +99,6 @@ DATABASES = {
         'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', '5432'),
         'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
 }
@@ -152,7 +151,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom User Model
-AUTH_USER_MODEL = 'autenticacao.User'
+AUTH_USER_MODEL = 'authentication.User'
 
 # Django REST Framework
 REST_FRAMEWORK = {
@@ -224,11 +223,6 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
-        },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
@@ -236,12 +230,12 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'console'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': True,
         },
         'apps': {
-            'handlers': ['file', 'console'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': True,
         },
@@ -279,7 +273,7 @@ MODELTRANSLATION_FALLBACK_LANGUAGES = ('pt-br', 'en')
 # Rosetta settings
 ROSETTA_WSGI_AUTO_RELOAD = True
 ROSETTA_UWSGI_AUTO_RELOAD = True
-ROSETTA_ACCESS_CONTROL_FUNCTION = 'apps.autenticacao.utils.can_translate'
+ROSETTA_ACCESS_CONTROL_FUNCTION = 'apps.authentication.utils.can_translate'
 
 # Feature Flags (Waffle) settings
 WAFFLE_CACHE_PREFIX = 'waffle:'

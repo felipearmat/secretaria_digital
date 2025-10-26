@@ -5,7 +5,7 @@ class GoogleCalendarService {
     this.baseURL = '/api/google-calendar'
   }
 
-  // Integrações
+  // Integrations
   async getIntegrations() {
     const response = await api.get(`${this.baseURL}/integrations/`)
     return response.data
@@ -44,7 +44,7 @@ class GoogleCalendarService {
     return response.data
   }
 
-  // Sincronização
+  // Synchronization
   async syncIntegration(integrationId, options = {}) {
     const response = await api.post(`${this.baseURL}/integrations/${integrationId}/sync/`, {
       sync_type: 'manual',
@@ -65,7 +65,7 @@ class GoogleCalendarService {
     return response.data
   }
 
-  // Eventos
+  // Events
   async getEvents(params = {}) {
     const response = await api.get(`${this.baseURL}/events/`, { params })
     return response.data
@@ -76,9 +76,9 @@ class GoogleCalendarService {
     return response.data
   }
 
-  async createEvent(agendamentoId) {
+  async createEvent(appointmentId) {
     const response = await api.post(`${this.baseURL}/events/create_event/`, {
-      agendamento_id: agendamentoId
+      appointment_id: appointmentId
     })
     return response.data
   }
@@ -93,7 +93,7 @@ class GoogleCalendarService {
     return response.data
   }
 
-  // Logs de sincronização
+  // Synchronization logs
   async getSyncLogs(params = {}) {
     const response = await api.get(`${this.baseURL}/sync-logs/`, { params })
     return response.data
@@ -114,12 +114,12 @@ class GoogleCalendarService {
     return response.data
   }
 
-  // Utilitários
+  // Utilities
   async checkIntegrationStatus(userId) {
     try {
       const integrations = await this.getIntegrations()
       const userIntegration = integrations.find(integration => 
-        integration.usuario === userId
+        integration.user === userId
       )
       
       return {
@@ -130,7 +130,7 @@ class GoogleCalendarService {
         needsReauth: userIntegration && userIntegration.is_token_expired
       }
     } catch (error) {
-      console.error('Erro ao verificar status da integração:', error)
+      console.error('Error checking integration status:', error)
       return {
         hasIntegration: false,
         integration: null,
@@ -141,7 +141,7 @@ class GoogleCalendarService {
     }
   }
 
-  // Configurações padrão
+  // Default settings
   getDefaultSyncOptions() {
     return {
       sync_type: 'manual',
@@ -150,20 +150,20 @@ class GoogleCalendarService {
     }
   }
 
-  // Validações
+  // Validations
   validateSyncOptions(options) {
     const errors = []
     
     if (options.days_back < 1 || options.days_back > 365) {
-      errors.push('Dias para trás deve estar entre 1 e 365')
+      errors.push('Days back must be between 1 and 365')
     }
     
     if (options.days_forward < 1 || options.days_forward > 365) {
-      errors.push('Dias para frente deve estar entre 1 e 365')
+      errors.push('Days forward must be between 1 and 365')
     }
     
     if (options.days_back + options.days_forward > 400) {
-      errors.push('A soma dos dias não pode ser maior que 400')
+      errors.push('Sum of days cannot be greater than 400')
     }
     
     return {
@@ -172,16 +172,16 @@ class GoogleCalendarService {
     }
   }
 
-  // Formatação de dados
-  formatEventData(agendamento) {
+  // Data formatting
+  formatEventData(appointment) {
     return {
-      summary: `${agendamento.servico_nome} - ${agendamento.cliente_nome}`,
-      description: agendamento.observacoes || agendamento.servico_descricao,
-      start: agendamento.inicio,
-      end: agendamento.fim,
+      summary: `${appointment.service_name} - ${appointment.client_name}`,
+      description: appointment.notes || appointment.service_description,
+      start: appointment.start_time,
+      end: appointment.end_time,
       attendees: [
-        { email: agendamento.cliente_email, displayName: agendamento.cliente_nome },
-        { email: agendamento.ator_email, displayName: agendamento.ator_nome }
+        { email: appointment.client_email, displayName: appointment.client_name },
+        { email: appointment.actor_email, displayName: appointment.actor_name }
       ]
     }
   }
@@ -199,35 +199,35 @@ class GoogleCalendarService {
 
   getSyncStatusText(status) {
     const texts = {
-      'synced': 'Sincronizado',
-      'pending': 'Pendente',
-      'error': 'Erro',
-      'conflict': 'Conflito'
+      'synced': 'Synced',
+      'pending': 'Pending',
+      'error': 'Error',
+      'conflict': 'Conflict'
     }
     return texts[status] || status
   }
 
   getSyncTypeText(type) {
     const texts = {
-      'full': 'Sincronização Completa',
-      'incremental': 'Sincronização Incremental',
-      'manual': 'Sincronização Manual',
-      'automatic': 'Sincronização Automática'
+      'full': 'Full Sync',
+      'incremental': 'Incremental Sync',
+      'manual': 'Manual Sync',
+      'automatic': 'Automatic Sync'
     }
     return texts[type] || type
   }
 
   getSyncDirectionText(direction) {
     const texts = {
-      'bidirectional': 'Bidirecional',
-      'to_google': 'Para Google',
-      'from_google': 'Do Google'
+      'bidirectional': 'Bidirectional',
+      'to_google': 'To Google',
+      'from_google': 'From Google'
     }
     return texts[direction] || direction
   }
 }
 
-// Instância singleton
+// Singleton instance
 const googleCalendarService = new GoogleCalendarService()
 
 export default googleCalendarService

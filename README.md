@@ -169,7 +169,7 @@ secretaria_digital/
 ├── apps/
 │   ├── empresas/              # Company management
 │   ├── autenticacao/          # User authentication and authorization
-│   ├── agendamentos/          # Appointments and services
+│   ├── appointments/          # Appointments and services
 │   ├── notificacoes/          # Notification system
 │   ├── pagamentos/            # Payments and coupons
 │   ├── google_calendar/       # Google Calendar integration

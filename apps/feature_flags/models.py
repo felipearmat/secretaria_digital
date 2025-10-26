@@ -28,10 +28,10 @@ class LocalizationConfig(models.Model):
     """Model for managing localization configurations."""
     
     LANGUAGE_CHOICES = [
-        ('pt-br', 'Português (Brasil)'),
+        ('pt-br', 'Portuguese (Brazil)'),
         ('en', 'English'),
-        ('es', 'Español'),
-        ('fr', 'Français'),
+        ('es', 'Spanish'),
+        ('fr', 'French'),
     ]
     
     language_code = models.CharField(

@@ -31,7 +31,9 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
 
   web:
-    build: ./docker/django
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
     command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code

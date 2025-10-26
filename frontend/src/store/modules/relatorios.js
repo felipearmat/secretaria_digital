@@ -1,35 +1,35 @@
 import api from '@/services/api'
 
 const state = {
-  relatorios: {
-    agendamentos: [],
-    financeiro: [],
-    atores: [],
-    servicos: []
+  reports: {
+    appointments: [],
+    financial: [],
+    actors: [],
+    services: []
   },
   loading: false,
   error: null,
-  filtros: {
-    data_inicio: '',
-    data_fim: '',
-    ator: '',
-    empresa: '',
-    servico: ''
+  filters: {
+    start_date: '',
+    end_date: '',
+    actor: '',
+    company: '',
+    service: ''
   }
 }
 
 const mutations = {
-  SET_RELATORIO_AGENDAMENTOS(state, data) {
-    state.relatorios.agendamentos = data
+  SET_REPORT_APPOINTMENTS(state, data) {
+    state.reports.appointments = data
   },
-  SET_RELATORIO_FINANCEIRO(state, data) {
-    state.relatorios.financeiro = data
+  SET_REPORT_FINANCIAL(state, data) {
+    state.reports.financial = data
   },
-  SET_RELATORIO_ATORES(state, data) {
-    state.relatorios.atores = data
+  SET_REPORT_ACTORS(state, data) {
+    state.reports.actors = data
   },
-  SET_RELATORIO_SERVICOS(state, data) {
-    state.relatorios.servicos = data
+  SET_REPORT_SERVICES(state, data) {
+    state.reports.services = data
   },
   SET_LOADING(state, loading) {
     state.loading = loading
@@ -37,24 +37,24 @@ const mutations = {
   SET_ERROR(state, error) {
     state.error = error
   },
-  SET_FILTROS(state, filtros) {
-    state.filtros = { ...state.filtros, ...filtros }
+  SET_FILTERS(state, filters) {
+    state.filters = { ...state.filters, ...filters }
   }
 }
 
 const actions = {
-  async fetchRelatorioAgendamentos({ commit, state }) {
+  async fetchReportAppointments({ commit, state }) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.get('/relatorios/agendamentos/', {
-        params: state.filtros
+      const response = await api.get('/reports/appointments/', {
+        params: state.filters
       })
-      commit('SET_RELATORIO_AGENDAMENTOS', response.data)
+      commit('SET_REPORT_APPOINTMENTS', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar relatório de agendamentos'
+      const message = error.response?.data?.error || 'Error loading appointments report'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -62,18 +62,18 @@ const actions = {
     }
   },
 
-  async fetchRelatorioFinanceiro({ commit, state }) {
+  async fetchReportFinancial({ commit, state }) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.get('/relatorios/financeiro/', {
-        params: state.filtros
+      const response = await api.get('/reports/financial/', {
+        params: state.filters
       })
-      commit('SET_RELATORIO_FINANCEIRO', response.data)
+      commit('SET_REPORT_FINANCIAL', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar relatório financeiro'
+      const message = error.response?.data?.error || 'Error loading financial report'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -81,18 +81,18 @@ const actions = {
     }
   },
 
-  async fetchRelatorioAtores({ commit, state }) {
+  async fetchReportActors({ commit, state }) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.get('/relatorios/atores/', {
-        params: state.filtros
+      const response = await api.get('/reports/actors/', {
+        params: state.filters
       })
-      commit('SET_RELATORIO_ATORES', response.data)
+      commit('SET_REPORT_ACTORS', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar relatório de atores'
+      const message = error.response?.data?.error || 'Error loading actors report'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -100,18 +100,18 @@ const actions = {
     }
   },
 
-  async fetchRelatorioServicos({ commit, state }) {
+  async fetchReportServices({ commit, state }) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.get('/relatorios/servicos/', {
-        params: state.filtros
+      const response = await api.get('/reports/services/', {
+        params: state.filters
       })
-      commit('SET_RELATORIO_SERVICOS', response.data)
+      commit('SET_REPORT_SERVICES', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar relatório de serviços'
+      const message = error.response?.data?.error || 'Error loading services report'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -119,33 +119,33 @@ const actions = {
     }
   },
 
-  setFiltros({ commit }, filtros) {
-    commit('SET_FILTROS', filtros)
+  setFilters({ commit }, filters) {
+    commit('SET_FILTERS', filters)
   }
 }
 
 const getters = {
-  relatorios: state => state.relatorios,
+  reports: state => state.reports,
   loading: state => state.loading,
   error: state => state.error,
-  filtros: state => state.filtros,
+  filters: state => state.filters,
   
-  totalAgendamentos: state => {
-    return state.relatorios.agendamentos.length
+  totalAppointments: state => {
+    return state.reports.appointments.length
   },
   
-  totalReceita: state => {
-    return state.relatorios.financeiro.reduce((total, item) => total + (item.receita || 0), 0)
+  totalRevenue: state => {
+    return state.reports.financial.reduce((total, item) => total + (item.revenue || 0), 0)
   },
   
-  totalCustos: state => {
-    return state.relatorios.financeiro.reduce((total, item) => total + (item.custos || 0), 0)
+  totalCosts: state => {
+    return state.reports.financial.reduce((total, item) => total + (item.costs || 0), 0)
   },
   
-  lucroLiquido: state => {
-    const receita = state.relatorios.financeiro.reduce((total, item) => total + (item.receita || 0), 0)
-    const custos = state.relatorios.financeiro.reduce((total, item) => total + (item.custos || 0), 0)
-    return receita - custos
+  netProfit: state => {
+    const revenue = state.reports.financial.reduce((total, item) => total + (item.revenue || 0), 0)
+    const costs = state.reports.financial.reduce((total, item) => total + (item.costs || 0), 0)
+    return revenue - costs
   }
 }
 

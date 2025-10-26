@@ -40,7 +40,7 @@ const actions = {
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.post('/auth/usuarios/login/', credentials)
+      const response = await api.post('/auth/users/login/', credentials)
       const { token, user } = response.data
       
       commit('SET_TOKEN', token)
@@ -51,7 +51,7 @@ const actions = {
       
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao fazer login'
+      const message = error.response?.data?.error || 'Error logging in'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -61,9 +61,9 @@ const actions = {
 
   async logout({ commit }) {
     try {
-      await api.post('/auth/usuarios/logout/')
+      await api.post('/auth/users/logout/')
     } catch (error) {
-      console.error('Erro ao fazer logout:', error)
+      console.error('Error logging out:', error)
     } finally {
       commit('CLEAR_AUTH')
       delete api.defaults.headers.common['Authorization']
@@ -75,10 +75,10 @@ const actions = {
     if (!state.token) return
 
     try {
-      const response = await api.get('/auth/usuarios/me/')
+      const response = await api.get('/auth/users/me/')
       commit('SET_USER', response.data)
     } catch (error) {
-      console.error('Erro ao carregar usuário atual:', error)
+      console.error('Error loading current user:', error)
       commit('CLEAR_AUTH')
       router.push('/login')
     }
@@ -88,11 +88,11 @@ const actions = {
     commit('SET_LOADING', true)
     
     try {
-      const response = await api.patch(`/auth/usuarios/${state.user.id}/`, userData)
+      const response = await api.patch(`/auth/users/${state.user.id}/`, userData)
       commit('SET_USER', response.data)
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao atualizar perfil'
+      const message = error.response?.data?.error || 'Error updating profile'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -104,10 +104,10 @@ const actions = {
     commit('SET_LOADING', true)
     
     try {
-      await api.post('/auth/usuarios/change-password/', passwordData)
+      await api.post('/auth/users/change-password/', passwordData)
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao alterar senha'
+      const message = error.response?.data?.error || 'Error changing password'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -142,16 +142,16 @@ const getters = {
         permissions.push('*')
         break
       case 'admin':
-        permissions.push('manage_company', 'manage_users', 'manage_agendamentos', 'manage_servicos', 'manage_cupons', 'view_reports')
+        permissions.push('manage_company', 'manage_users', 'manage_appointments', 'manage_services', 'manage_coupons', 'view_reports')
         break
-      case 'gerente':
-        permissions.push('manage_actors', 'manage_agendamentos', 'manage_servicos', 'manage_cupons', 'view_reports')
+      case 'manager':
+        permissions.push('manage_actors', 'manage_appointments', 'manage_services', 'manage_coupons', 'view_reports')
         break
-      case 'ator':
-        permissions.push('manage_own_agendamentos', 'manage_own_servicos', 'view_own_reports')
+      case 'actor':
+        permissions.push('manage_own_appointments', 'manage_own_services', 'view_own_reports')
         break
-      case 'usuario':
-        permissions.push('view_agendamentos', 'create_agendamentos')
+      case 'user':
+        permissions.push('view_appointments', 'create_appointments')
         break
     }
     
@@ -163,10 +163,10 @@ const getters = {
     const role = state.user.role
     const permissions = {
       'superadmin': ['*'],
-      'admin': ['users', 'agendamentos', 'servicos', 'cupons', 'reports'],
-      'gerente': ['actors', 'agendamentos', 'servicos', 'cupons', 'reports'],
-      'ator': ['own_agendamentos', 'own_servicos', 'own_reports'],
-      'usuario': ['agendamentos']
+      'admin': ['users', 'appointments', 'services', 'coupons', 'reports'],
+      'manager': ['actors', 'appointments', 'services', 'coupons', 'reports'],
+      'actor': ['own_appointments', 'own_services', 'own_reports'],
+      'user': ['appointments']
     }
     
     return permissions[role]?.includes('*') || permissions[role]?.includes(resource) || false

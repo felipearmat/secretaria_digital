@@ -9,7 +9,7 @@
               Dashboard
             </h1>
             <p class="text-subtitle1 text-grey-darken-1">
-              Bem-vindo de volta, {{ user.name }}!
+              Welcome back, {{ user.name }}!
             </p>
           </div>
           
@@ -17,9 +17,9 @@
             <v-btn
               color="primary"
               prepend-icon="mdi-plus"
-              @click="$router.push('/agendamentos/novo')"
+              @click="$router.push('/appointments/new')"
             >
-              Novo Agendamento
+              New Appointment
             </v-btn>
             
             <v-btn
@@ -28,14 +28,14 @@
               @click="refreshData"
               :loading="loading"
             >
-              Atualizar
+              Refresh
             </v-btn>
           </div>
         </div>
       </v-col>
     </v-row>
 
-    <!-- Estatísticas -->
+    <!-- Statistics -->
     <v-row class="mb-6">
       <v-col cols="12" sm="6" md="3">
         <v-card class="pa-4" color="primary" variant="flat">
@@ -45,10 +45,10 @@
             </v-avatar>
             <div>
               <div class="text-h4 font-weight-bold text-white">
-                {{ stats.totalAgendamentos }}
+                {{ stats.totalAppointments }}
               </div>
               <div class="text-subtitle2 text-white">
-                Total de Agendamentos
+                Total Appointments
               </div>
             </div>
           </div>
@@ -63,10 +63,10 @@
             </v-avatar>
             <div>
               <div class="text-h4 font-weight-bold text-white">
-                {{ formatCurrency(stats.totalReceita) }}
+                {{ formatCurrency(stats.totalRevenue) }}
               </div>
               <div class="text-subtitle2 text-white">
-                Receita Total
+                Total Revenue
               </div>
             </div>
           </div>
@@ -81,10 +81,10 @@
             </v-avatar>
             <div>
               <div class="text-h4 font-weight-bold text-white">
-                {{ stats.totalClientes }}
+                {{ stats.totalClients }}
               </div>
               <div class="text-subtitle2 text-white">
-                Total de Clientes
+                Total Clients
               </div>
             </div>
           </div>
@@ -99,10 +99,10 @@
             </v-avatar>
             <div>
               <div class="text-h4 font-weight-bold text-white">
-                {{ stats.totalServicos }}
+                {{ stats.totalServices }}
               </div>
               <div class="text-subtitle2 text-white">
-                Total de Serviços
+                Total Services
               </div>
             </div>
           </div>
@@ -110,59 +110,59 @@
       </v-col>
     </v-row>
 
-    <!-- Gráficos e Tabelas -->
+    <!-- Charts and Tables -->
     <v-row>
-      <!-- Próximos Agendamentos -->
+      <!-- Upcoming Appointments -->
       <v-col cols="12" lg="8">
         <v-card>
           <v-card-title class="d-flex align-center justify-space-between">
-            <span>Próximos Agendamentos</span>
+            <span>Upcoming Appointments</span>
             <v-btn
               variant="text"
               color="primary"
-              @click="$router.push('/agendamentos')"
+              @click="$router.push('/appointments')"
             >
-              Ver Todos
+              View All
             </v-btn>
           </v-card-title>
           
           <v-card-text>
-            <v-list v-if="proximosAgendamentos.length > 0">
+            <v-list v-if="upcomingAppointments.length > 0">
               <v-list-item
-                v-for="agendamento in proximosAgendamentos"
-                :key="agendamento.id"
+                v-for="appointment in upcomingAppointments"
+                :key="appointment.id"
                 class="px-0"
               >
                 <template v-slot:prepend>
                   <v-avatar
-                    :color="getStatusColor(agendamento.status)"
+                    :color="getStatusColor(appointment.status)"
                     size="40"
                   >
                     <v-icon color="white">
-                      {{ getStatusIcon(agendamento.status) }}
+                      {{ getStatusIcon(appointment.status) }}
                     </v-icon>
                   </v-avatar>
                 </template>
                 
                 <v-list-item-title>
-                  {{ agendamento.servico_nome }}
+                  {{ appointment.service_name }}
                 </v-list-item-title>
                 
                 <v-list-item-subtitle>
-                  {{ agendamento.cliente_nome }} • {{ agendamento.ator_nome }}
+                  {{ appointment.client_name }} • {{ appointment.actor_name }}
                 </v-list-item-subtitle>
                 
                 <template v-slot:append>
                   <div class="text-right">
                     <div class="text-body2 font-weight-medium">
-                      {{ formatDateTime(agendamento.inicio) }}
+                      {{ formatDateTime(appointment.start_time) }}
                     </div>
                     <v-chip
-                      :color="getStatusColor(agendamento.status)"
+                      :color="getStatusColor(appointment.status)"
                       size="small"
                       variant="flat"
                     >
-                      {{ getStatusText(agendamento.status) }}
+                      {{ getStatusText(appointment.status) }}
                     </v-chip>
                   </div>
                 </template>
@@ -171,23 +171,23 @@
             
             <v-empty-state
               v-else
-              title="Nenhum agendamento próximo"
-              text="Você não tem agendamentos próximos no momento."
+              title="No upcoming appointments"
+              text="You don't have any upcoming appointments at the moment."
               icon="mdi-calendar-clock"
             />
           </v-card-text>
         </v-card>
       </v-col>
       
-      <!-- Atividade Recente -->
+      <!-- Recent Activity -->
       <v-col cols="12" lg="4">
         <v-card>
-          <v-card-title>Atividade Recente</v-card-title>
+          <v-card-title>Recent Activity</v-card-title>
           
           <v-card-text>
             <v-timeline density="compact" align="start">
               <v-timeline-item
-                v-for="(item, index) in atividadeRecente"
+                v-for="(item, index) in recentActivity"
                 :key="index"
                 :dot-color="item.color"
                 size="small"
@@ -212,11 +212,11 @@
       </v-col>
     </v-row>
 
-    <!-- Gráficos -->
+    <!-- Charts -->
     <v-row class="mt-6">
       <v-col cols="12" md="6">
         <v-card>
-          <v-card-title>Agendamentos por Status</v-card-title>
+          <v-card-title>Appointments by Status</v-card-title>
           
           <v-card-text>
             <div class="d-flex justify-center">
@@ -230,7 +230,7 @@
       
       <v-col cols="12" md="6">
         <v-card>
-          <v-card-title>Receita por Mês</v-card-title>
+          <v-card-title>Monthly Revenue</v-card-title>
           
           <v-card-text>
             <div class="d-flex justify-center">
@@ -258,32 +258,32 @@ export default {
     return {
       loading: false,
       stats: {
-        totalAgendamentos: 0,
-        totalReceita: 0,
-        totalClientes: 0,
-        totalServicos: 0
+        totalAppointments: 0,
+        totalRevenue: 0,
+        totalClients: 0,
+        totalServices: 0
       },
-      atividadeRecente: [
+      recentActivity: [
         {
-          text: 'Novo agendamento criado',
+          text: 'New appointment created',
           time: new Date(),
           color: 'primary',
           icon: 'mdi-calendar-plus'
         },
         {
-          text: 'Pagamento confirmado',
+          text: 'Payment confirmed',
           time: new Date(Date.now() - 3600000),
           color: 'success',
           icon: 'mdi-credit-card'
         },
         {
-          text: 'Agendamento cancelado',
+          text: 'Appointment cancelled',
           time: new Date(Date.now() - 7200000),
           color: 'error',
           icon: 'mdi-calendar-remove'
         },
         {
-          text: 'Novo cliente cadastrado',
+          text: 'New client registered',
           time: new Date(Date.now() - 10800000),
           color: 'info',
           icon: 'mdi-account-plus'
@@ -295,35 +295,35 @@ export default {
   },
   computed: {
     ...mapState('auth', ['user']),
-    ...mapGetters('agendamentos', ['proximosAgendamentos'])
+    ...mapGetters('appointments', ['upcomingAppointments'])
   },
   async mounted() {
     await this.loadDashboardData()
     this.createCharts()
   },
   methods: {
-    ...mapActions('agendamentos', ['fetchAgendamentos']),
+    ...mapActions('appointments', ['fetchAppointments']),
     
     async loadDashboardData() {
       this.loading = true
       
       try {
-        // Carrega agendamentos
-        await this.fetchAgendamentos({
+        // Load appointments
+        await this.fetchAppointments({
           page_size: 5,
-          ordering: 'inicio'
+          ordering: 'start_time'
         })
         
-        // Simula dados de estatísticas (em produção, viria da API)
+        // Simulate statistics data (in production, would come from API)
         this.stats = {
-          totalAgendamentos: 156,
-          totalReceita: 125000,
-          totalClientes: 89,
-          totalServicos: 12
+          totalAppointments: 156,
+          totalRevenue: 125000,
+          totalClients: 89,
+          totalServices: 12
         }
       } catch (error) {
-        console.error('Erro ao carregar dados do dashboard:', error)
-        this.$toast.error('Erro ao carregar dados do dashboard')
+        console.error('Error loading dashboard data:', error)
+        this.$toast.error('Error loading dashboard data')
       } finally {
         this.loading = false
       }
@@ -352,7 +352,7 @@ export default {
       this.statusChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['Confirmados', 'Pendentes', 'Cancelados', 'Concluídos'],
+          labels: ['Confirmed', 'Pending', 'Cancelled', 'Completed'],
           datasets: [{
             data: [45, 20, 15, 20],
             backgroundColor: [
@@ -387,9 +387,9 @@ export default {
       this.revenueChart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
           datasets: [{
-            label: 'Receita',
+            label: 'Revenue',
             data: [12000, 15000, 18000, 16000, 20000, 22000],
             borderColor: '#1976D2',
             backgroundColor: 'rgba(25, 118, 210, 0.1)',
@@ -430,30 +430,30 @@ export default {
     
     getStatusColor(status) {
       const colors = {
-        'pendente': 'warning',
-        'confirmado': 'success',
-        'cancelado': 'error',
-        'concluido': 'info'
+        'pending': 'warning',
+        'confirmed': 'success',
+        'cancelled': 'error',
+        'completed': 'info'
       }
       return colors[status] || 'grey'
     },
     
     getStatusIcon(status) {
       const icons = {
-        'pendente': 'mdi-clock',
-        'confirmado': 'mdi-check',
-        'cancelado': 'mdi-close',
-        'concluido': 'mdi-check-circle'
+        'pending': 'mdi-clock',
+        'confirmed': 'mdi-check',
+        'cancelled': 'mdi-close',
+        'completed': 'mdi-check-circle'
       }
       return icons[status] || 'mdi-help'
     },
     
     getStatusText(status) {
       const texts = {
-        'pendente': 'Pendente',
-        'confirmado': 'Confirmado',
-        'cancelado': 'Cancelado',
-        'concluido': 'Concluído'
+        'pending': 'Pending',
+        'confirmed': 'Confirmed',
+        'cancelled': 'Cancelled',
+        'completed': 'Completed'
       }
       return texts[status] || status
     }

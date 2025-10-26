@@ -1,60 +1,60 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.conf import settings
-from apps.agendamentos.models import Agendamento
+from apps.appointments.models import Appointment
 from .models import GoogleCalendarIntegration
 from .tasks import (
-    sync_agendamento_to_google_calendar,
-    remove_agendamento_from_google_calendar
+    sync_appointment_to_google_calendar,
+    remove_appointment_from_google_calendar
 )
 
 
-@receiver(post_save, sender=Agendamento)
-def sync_agendamento_to_google(sender, instance, created, **kwargs):
+@receiver(post_save, sender=Appointment)
+def sync_appointment_to_google(sender, instance, created, **kwargs):
     """
-    Sincroniza agendamento com Google Calendar quando criado ou atualizado.
+    Synchronizes appointment with Google Calendar when created or updated.
     """
-    # Verifica se a sincronização automática está habilitada
+    # Check if automatic synchronization is enabled
     if not getattr(settings, 'GOOGLE_CALENDAR_AUTO_SYNC', True):
         return
     
-    # Verifica se o agendamento deve ser sincronizado
-    if instance.status not in ['pendente', 'confirmado']:
+    # Check if appointment should be synchronized
+    if instance.status not in ['pending', 'confirmed']:
         return
     
-    # Verifica se o ator tem integração ativa
+    # Check if actor has active integration
     try:
         integration = GoogleCalendarIntegration.objects.get(
-            usuario=instance.ator,
+            user=instance.actor,
             sync_enabled=True,
             sync_direction__in=['bidirectional', 'to_google']
         )
     except GoogleCalendarIntegration.DoesNotExist:
         return
     
-    # Agenda sincronização
-    sync_agendamento_to_google_calendar.delay(instance.id)
+    # Schedule synchronization
+    sync_appointment_to_google_calendar.delay(instance.id)
 
 
-@receiver(post_delete, sender=Agendamento)
-def remove_agendamento_from_google(sender, instance, **kwargs):
+@receiver(post_delete, sender=Appointment)
+def remove_appointment_from_google(sender, instance, **kwargs):
     """
-    Remove agendamento do Google Calendar quando excluído.
+    Removes appointment from Google Calendar when deleted.
     """
-    # Verifica se a sincronização automática está habilitada
+    # Checks if automatic synchronization is enabled
     if not getattr(settings, 'GOOGLE_CALENDAR_AUTO_SYNC', True):
         return
     
-    # Verifica se o ator tem integração ativa
+    # Checks if actor has active integration
     try:
         integration = GoogleCalendarIntegration.objects.get(
-            usuario=instance.ator,
+            user=instance.actor,
             sync_enabled=True,
             sync_direction__in=['bidirectional', 'to_google']
         )
     except GoogleCalendarIntegration.DoesNotExist:
         return
     
-    # Agenda remoção
-    remove_agendamento_from_google_calendar.delay(instance.id)
+    # Schedule removal
+    remove_appointment_from_google_calendar.delay(instance.id)
 

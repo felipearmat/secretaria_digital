@@ -18,7 +18,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'secretariaVirtual.settings')
 django_asgi_app = get_asgi_application()
 
 # Import WebSocket routes
-from apps.agendamentos.routing import websocket_urlpatterns
+from apps.appointments.routing import websocket_urlpatterns
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,

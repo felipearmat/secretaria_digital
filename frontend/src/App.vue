@@ -22,8 +22,8 @@
     >
       <v-list-item
         prepend-avatar="/icons/logo.png"
-        :title="rail ? '' : 'Secretaria Virtual'"
-        subtitle="Sistema de Agendamentos"
+        :title="rail ? '' : 'Virtual Secretary'"
+        subtitle="Appointment System"
         nav
       >
         <template v-slot:append>
@@ -52,7 +52,7 @@
       <template v-slot:append>
         <v-list-item
           prepend-icon="mdi-logout"
-          :title="rail ? '' : 'Sair'"
+          :title="rail ? '' : 'Logout'"
           @click="logout"
         />
       </template>
@@ -112,12 +112,12 @@
           <v-divider />
           <v-list-item
             prepend-icon="mdi-cog"
-            title="Configurações"
+            title="Settings"
             @click="$router.push('/settings')"
           />
           <v-list-item
             prepend-icon="mdi-logout"
-            title="Sair"
+            title="Logout"
             @click="logout"
           />
         </v-list>
@@ -139,7 +139,7 @@
       width="400"
     >
       <v-toolbar>
-        <v-toolbar-title>Notificações</v-toolbar-title>
+        <v-toolbar-title>Notifications</v-toolbar-title>
         <v-spacer />
         <v-btn
           icon
@@ -172,7 +172,7 @@
 
         <v-list-item v-if="notifications.length === 0">
           <v-list-item-title class="text-center text-grey">
-            Nenhuma notificação
+            No notifications
           </v-list-item-title>
         </v-list-item>
       </v-list>
@@ -191,7 +191,7 @@
           variant="text"
           @click="snackbar.show = false"
         >
-          Fechar
+          Close
         </v-btn>
       </template>
     </v-snackbar>
@@ -221,7 +221,7 @@ export default {
     currentPageTitle() {
       const route = this.$route
       const meta = route.meta || {}
-      return meta.title || 'Secretaria Virtual'
+      return meta.title || 'Virtual Secretary'
     },
     
     unreadNotifications() {
@@ -237,49 +237,49 @@ export default {
           value: 'dashboard'
         },
         {
-          title: 'Agendamentos',
+          title: 'Appointments',
           icon: 'mdi-calendar',
-          to: '/agendamentos',
-          value: 'agendamentos'
+          to: '/appointments',
+          value: 'appointments'
         },
         {
-          title: 'Serviços',
+          title: 'Services',
           icon: 'mdi-cog',
-          to: '/servicos',
-          value: 'servicos'
+          to: '/services',
+          value: 'services'
         }
       ]
 
-      // Adiciona itens baseados no role do usuário
-      if (this.user.role === 'admin' || this.user.role === 'gerente') {
+      // Add items based on user role
+      if (this.user.role === 'admin' || this.user.role === 'manager') {
         items.push(
           {
-            title: 'Usuários',
+            title: 'Users',
             icon: 'mdi-account-group',
-            to: '/usuarios',
-            value: 'usuarios'
+            to: '/users',
+            value: 'users'
           },
           {
-            title: 'Cupons',
+            title: 'Coupons',
             icon: 'mdi-ticket-percent',
-            to: '/cupons',
-            value: 'cupons'
+            to: '/coupons',
+            value: 'coupons'
           }
         )
       }
 
-      if (this.user.role === 'admin' || this.user.role === 'gerente' || this.user.role === 'ator') {
+      if (this.user.role === 'admin' || this.user.role === 'manager' || this.user.role === 'actor') {
         items.push(
           {
-            title: 'Relatórios',
+            title: 'Reports',
             icon: 'mdi-chart-line',
-            to: '/relatorios',
-            value: 'relatorios'
+            to: '/reports',
+            value: 'reports'
           }
         )
       }
 
-      // Adiciona Google Calendar para todos os usuários autenticados
+      // Add Google Calendar for all authenticated users
       items.push(
         {
           title: 'Google Calendar',
@@ -306,12 +306,12 @@ export default {
     async initializeApp() {
       this.loading = true
       try {
-        // Carrega dados iniciais
+        // Load initial data
         await this.loadNotifications()
       } catch (error) {
-        console.error('Erro ao inicializar app:', error)
+        console.error('Error initializing app:', error)
         this.showSnackbar({
-          message: 'Erro ao carregar dados iniciais',
+          message: 'Error loading initial data',
           color: 'error'
         })
       } finally {
@@ -325,26 +325,26 @@ export default {
     
     getNotificationColor(type) {
       const colors = {
-        'agendamento_criado': 'primary',
-        'agendamento_confirmado': 'success',
-        'agendamento_cancelado': 'error',
-        'lembrete': 'warning',
-        'pagamento_confirmado': 'success',
-        'cupom_disponivel': 'info',
-        'sistema': 'grey'
+        'appointment_created': 'primary',
+        'appointment_confirmed': 'success',
+        'appointment_cancelled': 'error',
+        'reminder': 'warning',
+        'payment_confirmed': 'success',
+        'coupon_available': 'info',
+        'system': 'grey'
       }
       return colors[type] || 'grey'
     },
     
     getNotificationIcon(type) {
       const icons = {
-        'agendamento_criado': 'mdi-calendar-plus',
-        'agendamento_confirmado': 'mdi-calendar-check',
-        'agendamento_cancelado': 'mdi-calendar-remove',
-        'lembrete': 'mdi-bell',
-        'pagamento_confirmado': 'mdi-credit-card',
-        'cupom_disponivel': 'mdi-ticket-percent',
-        'sistema': 'mdi-information'
+        'appointment_created': 'mdi-calendar-plus',
+        'appointment_confirmed': 'mdi-calendar-check',
+        'appointment_cancelled': 'mdi-calendar-remove',
+        'reminder': 'mdi-bell',
+        'payment_confirmed': 'mdi-credit-card',
+        'coupon_available': 'mdi-ticket-percent',
+        'system': 'mdi-information'
       }
       return icons[type] || 'mdi-information'
     },

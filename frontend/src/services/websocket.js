@@ -20,7 +20,7 @@ class WebSocketService {
 
     const token = localStorage.getItem('token')
     if (!token) {
-      console.warn('[WebSocket] Token não encontrado, não conectando')
+      console.warn('[WebSocket] Token not found, not connecting')
       return
     }
 
@@ -34,7 +34,7 @@ class WebSocketService {
 
       this.setupEventListeners()
     } catch (error) {
-      console.error('[WebSocket] Erro ao conectar:', error)
+      console.error('[WebSocket] Connection error:', error)
     }
   }
 
@@ -50,19 +50,19 @@ class WebSocketService {
     if (!this.socket) return
 
     this.socket.on('connect', () => {
-      console.log('[WebSocket] Conectado')
+      console.log('[WebSocket] Connected')
       this.connected = true
       this.reconnectAttempts = 0
       this.emit('connected')
     })
 
     this.socket.on('disconnect', (reason) => {
-      console.log('[WebSocket] Desconectado:', reason)
+      console.log('[WebSocket] Disconnected:', reason)
       this.connected = false
       this.emit('disconnected', reason)
       
       if (reason === 'io server disconnect') {
-        // Servidor forçou desconexão, não reconectar
+        // Server forced disconnection, don't reconnect
         return
       }
       
@@ -70,61 +70,61 @@ class WebSocketService {
     })
 
     this.socket.on('connect_error', (error) => {
-      console.error('[WebSocket] Erro de conexão:', error)
+      console.error('[WebSocket] Connection error:', error)
       this.emit('error', error)
     })
 
-    // Eventos específicos da aplicação
-    this.socket.on('agendamento_criado', (data) => {
-      console.log('[WebSocket] Agendamento criado:', data)
-      this.emit('agendamento_criado', data)
-      toast.success('Novo agendamento criado')
+    // Application-specific events
+    this.socket.on('appointment_created', (data) => {
+      console.log('[WebSocket] Appointment created:', data)
+      this.emit('appointment_created', data)
+      toast.success('New appointment created')
     })
 
-    this.socket.on('agendamento_atualizado', (data) => {
-      console.log('[WebSocket] Agendamento atualizado:', data)
-      this.emit('agendamento_atualizado', data)
-      toast.info('Agendamento atualizado')
+    this.socket.on('appointment_updated', (data) => {
+      console.log('[WebSocket] Appointment updated:', data)
+      this.emit('appointment_updated', data)
+      toast.info('Appointment updated')
     })
 
-    this.socket.on('agendamento_cancelado', (data) => {
-      console.log('[WebSocket] Agendamento cancelado:', data)
-      this.emit('agendamento_cancelado', data)
-      toast.warning('Agendamento cancelado')
+    this.socket.on('appointment_cancelled', (data) => {
+      console.log('[WebSocket] Appointment cancelled:', data)
+      this.emit('appointment_cancelled', data)
+      toast.warning('Appointment cancelled')
     })
 
-    this.socket.on('notificacao_nova', (data) => {
-      console.log('[WebSocket] Nova notificação:', data)
-      this.emit('notificacao_nova', data)
-      toast.info(data.title || 'Nova notificação')
+    this.socket.on('notification_new', (data) => {
+      console.log('[WebSocket] New notification:', data)
+      this.emit('notification_new', data)
+      toast.info(data.title || 'New notification')
     })
 
-    this.socket.on('pagamento_confirmado', (data) => {
-      console.log('[WebSocket] Pagamento confirmado:', data)
-      this.emit('pagamento_confirmado', data)
-      toast.success('Pagamento confirmado')
+    this.socket.on('payment_confirmed', (data) => {
+      console.log('[WebSocket] Payment confirmed:', data)
+      this.emit('payment_confirmed', data)
+      toast.success('Payment confirmed')
     })
 
-    this.socket.on('cupom_criado', (data) => {
-      console.log('[WebSocket] Cupom criado:', data)
-      this.emit('cupom_criado', data)
-      toast.success('Novo cupom disponível')
+    this.socket.on('coupon_created', (data) => {
+      console.log('[WebSocket] Coupon created:', data)
+      this.emit('coupon_created', data)
+      toast.success('New coupon available')
     })
 
-    this.socket.on('usuario_online', (data) => {
-      console.log('[WebSocket] Usuário online:', data)
-      this.emit('usuario_online', data)
+    this.socket.on('user_online', (data) => {
+      console.log('[WebSocket] User online:', data)
+      this.emit('user_online', data)
     })
 
-    this.socket.on('usuario_offline', (data) => {
-      console.log('[WebSocket] Usuário offline:', data)
-      this.emit('usuario_offline', data)
+    this.socket.on('user_offline', (data) => {
+      console.log('[WebSocket] User offline:', data)
+      this.emit('user_offline', data)
     })
   }
 
   attemptReconnect() {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.error('[WebSocket] Máximo de tentativas de reconexão atingido')
+      console.error('[WebSocket] Maximum reconnection attempts reached')
       this.emit('reconnect_failed')
       return
     }
@@ -132,27 +132,27 @@ class WebSocketService {
     this.reconnectAttempts++
     const delay = this.reconnectInterval * Math.pow(2, this.reconnectAttempts - 1)
     
-    console.log(`[WebSocket] Tentativa de reconexão ${this.reconnectAttempts}/${this.maxReconnectAttempts} em ${delay}ms`)
+    console.log(`[WebSocket] Reconnection attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${delay}ms`)
     
     setTimeout(() => {
       this.connect()
     }, delay)
   }
 
-  // Métodos para emitir eventos
+  // Methods to emit events
   emit(event, data) {
     if (this.listeners.has(event)) {
       this.listeners.get(event).forEach(callback => {
         try {
           callback(data)
         } catch (error) {
-          console.error(`[WebSocket] Erro ao executar callback para evento ${event}:`, error)
+          console.error(`[WebSocket] Error executing callback for event ${event}:`, error)
         }
       })
     }
   }
 
-  // Métodos para escutar eventos
+  // Methods to listen to events
   on(event, callback) {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, [])
@@ -170,16 +170,16 @@ class WebSocketService {
     }
   }
 
-  // Métodos para enviar eventos para o servidor
+  // Methods to send events to server
   send(event, data) {
     if (this.socket && this.connected) {
       this.socket.emit(event, data)
     } else {
-      console.warn('[WebSocket] Socket não conectado, não é possível enviar evento:', event)
+      console.warn('[WebSocket] Socket not connected, cannot send event:', event)
     }
   }
 
-  // Métodos específicos da aplicação
+  // Application-specific methods
   joinRoom(room) {
     this.send('join_room', { room })
   }
@@ -188,12 +188,12 @@ class WebSocketService {
     this.send('leave_room', { room })
   }
 
-  // Status da conexão
+  // Connection status
   isConnected() {
     return this.connected && this.socket
   }
 
-  // Reconectar manualmente
+  // Manually reconnect
   reconnect() {
     this.disconnect()
     this.reconnectAttempts = 0
@@ -201,7 +201,7 @@ class WebSocketService {
   }
 }
 
-// Instância singleton
+// Singleton instance
 const websocketService = new WebSocketService()
 
 export default websocketService

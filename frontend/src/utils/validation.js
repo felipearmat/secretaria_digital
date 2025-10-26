@@ -1,11 +1,11 @@
 /**
- * Validações comuns para formulários
+ * Common form validations
  */
 
 /**
- * Valida se um email é válido
- * @param {string} email - Email para validar
- * @returns {boolean} True se válido
+ * Validates if an email is valid
+ * @param {string} email - Email to validate
+ * @returns {boolean} True if valid
  */
 export function isValidEmail(email) {
   if (!email) return false
@@ -15,38 +15,38 @@ export function isValidEmail(email) {
 }
 
 /**
- * Valida se um telefone é válido (formato brasileiro)
- * @param {string} phone - Telefone para validar
- * @returns {boolean} True se válido
+ * Validates if a phone is valid (Brazilian format)
+ * @param {string} phone - Phone to validate
+ * @returns {boolean} True if valid
  */
 export function isValidPhone(phone) {
   if (!phone) return false
   
-  // Remove caracteres não numéricos
+  // Remove non-numeric characters
   const cleanPhone = phone.replace(/\D/g, '')
   
-  // Verifica se tem 10 ou 11 dígitos
+  // Check if it has 10 or 11 digits
   return cleanPhone.length === 10 || cleanPhone.length === 11
 }
 
 /**
- * Valida se um CPF é válido
- * @param {string} cpf - CPF para validar
- * @returns {boolean} True se válido
+ * Validates if a CPF is valid
+ * @param {string} cpf - CPF to validate
+ * @returns {boolean} True if valid
  */
 export function isValidCPF(cpf) {
   if (!cpf) return false
   
-  // Remove caracteres não numéricos
+  // Remove non-numeric characters
   const cleanCPF = cpf.replace(/\D/g, '')
   
-  // Verifica se tem 11 dígitos
+  // Check if it has 11 digits
   if (cleanCPF.length !== 11) return false
   
-  // Verifica se não são todos os dígitos iguais
+  // Check if not all digits are the same
   if (/^(\d)\1{10}$/.test(cleanCPF)) return false
   
-  // Validação do primeiro dígito verificador
+  // First check digit validation
   let sum = 0
   for (let i = 0; i < 9; i++) {
     sum += parseInt(cleanCPF.charAt(i)) * (10 - i)
@@ -56,7 +56,7 @@ export function isValidCPF(cpf) {
   
   if (parseInt(cleanCPF.charAt(9)) !== digit1) return false
   
-  // Validação do segundo dígito verificador
+  // Second check digit validation
   sum = 0
   for (let i = 0; i < 10; i++) {
     sum += parseInt(cleanCPF.charAt(i)) * (11 - i)
@@ -68,23 +68,23 @@ export function isValidCPF(cpf) {
 }
 
 /**
- * Valida se um CNPJ é válido
- * @param {string} cnpj - CNPJ para validar
- * @returns {boolean} True se válido
+ * Validates if a CNPJ is valid
+ * @param {string} cnpj - CNPJ to validate
+ * @returns {boolean} True if valid
  */
 export function isValidCNPJ(cnpj) {
   if (!cnpj) return false
   
-  // Remove caracteres não numéricos
+  // Remove non-numeric characters
   const cleanCNPJ = cnpj.replace(/\D/g, '')
   
-  // Verifica se tem 14 dígitos
+  // Check if it has 14 digits
   if (cleanCNPJ.length !== 14) return false
   
-  // Verifica se não são todos os dígitos iguais
+  // Check if not all digits are the same
   if (/^(\d)\1{13}$/.test(cleanCNPJ)) return false
   
-  // Validação do primeiro dígito verificador
+  // First check digit validation
   let sum = 0
   let weight = 2
   for (let i = 11; i >= 0; i--) {
@@ -96,7 +96,7 @@ export function isValidCNPJ(cnpj) {
   
   if (parseInt(cleanCNPJ.charAt(12)) !== digit1) return false
   
-  // Validação do segundo dígito verificador
+  // Second check digit validation
   sum = 0
   weight = 2
   for (let i = 12; i >= 0; i--) {
@@ -110,9 +110,9 @@ export function isValidCNPJ(cnpj) {
 }
 
 /**
- * Valida se uma senha é forte
- * @param {string} password - Senha para validar
- * @returns {object} Objeto com validação e mensagens
+ * Validates if a password is strong
+ * @param {string} password - Password to validate
+ * @returns {object} Object with validation and messages
  */
 export function validatePassword(password) {
   const result = {
@@ -122,42 +122,42 @@ export function validatePassword(password) {
   
   if (!password) {
     result.isValid = false
-    result.errors.push('Senha é obrigatória')
+    result.errors.push('Password is required')
     return result
   }
   
   if (password.length < 8) {
     result.isValid = false
-    result.errors.push('Senha deve ter pelo menos 8 caracteres')
+    result.errors.push('Password must have at least 8 characters')
   }
   
   if (!/[A-Z]/.test(password)) {
     result.isValid = false
-    result.errors.push('Senha deve conter pelo menos uma letra maiúscula')
+    result.errors.push('Password must contain at least one uppercase letter')
   }
   
   if (!/[a-z]/.test(password)) {
     result.isValid = false
-    result.errors.push('Senha deve conter pelo menos uma letra minúscula')
+    result.errors.push('Password must contain at least one lowercase letter')
   }
   
   if (!/\d/.test(password)) {
     result.isValid = false
-    result.errors.push('Senha deve conter pelo menos um número')
+    result.errors.push('Password must contain at least one number')
   }
   
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
     result.isValid = false
-    result.errors.push('Senha deve conter pelo menos um caractere especial')
+    result.errors.push('Password must contain at least one special character')
   }
   
   return result
 }
 
 /**
- * Valida se uma data é válida
- * @param {string|Date} date - Data para validar
- * @returns {boolean} True se válida
+ * Validates if a date is valid
+ * @param {string|Date} date - Date to validate
+ * @returns {boolean} True if valid
  */
 export function isValidDate(date) {
   if (!date) return false
@@ -167,9 +167,9 @@ export function isValidDate(date) {
 }
 
 /**
- * Valida se uma data é futura
- * @param {string|Date} date - Data para validar
- * @returns {boolean} True se for futura
+ * Validates if a date is in the future
+ * @param {string|Date} date - Date to validate
+ * @returns {boolean} True if it is in the future
  */
 export function isFutureDate(date) {
   if (!isValidDate(date)) return false
@@ -179,9 +179,9 @@ export function isFutureDate(date) {
 }
 
 /**
- * Valida se uma data é passada
- * @param {string|Date} date - Data para validar
- * @returns {boolean} True se for passada
+ * Validates if a date is in the past
+ * @param {string|Date} date - Date to validate
+ * @returns {boolean} True if it is in the past
  */
 export function isPastDate(date) {
   if (!isValidDate(date)) return false
@@ -191,75 +191,75 @@ export function isPastDate(date) {
 }
 
 /**
- * Valida se um valor é um número válido
- * @param {any} value - Valor para validar
- * @returns {boolean} True se for um número válido
+ * Validates if a value is a valid number
+ * @param {any} value - Value to validate
+ * @returns {boolean} True if it is a valid number
  */
 export function isValidNumber(value) {
   return !isNaN(value) && isFinite(value) && value !== ''
 }
 
 /**
- * Valida se um valor é um número positivo
- * @param {any} value - Valor para validar
- * @returns {boolean} True se for um número positivo
+ * Validates if a value is a positive number
+ * @param {any} value - Value to validate
+ * @returns {boolean} True if it is a positive number
  */
 export function isValidPositiveNumber(value) {
   return isValidNumber(value) && parseFloat(value) > 0
 }
 
 /**
- * Valida se um valor é um número inteiro
- * @param {any} value - Valor para validar
- * @returns {boolean} True se for um número inteiro
+ * Validates if a value is an integer
+ * @param {any} value - Value to validate
+ * @returns {boolean} True if it is an integer
  */
 export function isValidInteger(value) {
   return isValidNumber(value) && Number.isInteger(parseFloat(value))
 }
 
 /**
- * Valida se uma string não está vazia
- * @param {string} value - String para validar
- * @returns {boolean} True se não estiver vazia
+ * Validates if a string is not empty
+ * @param {string} value - String to validate
+ * @returns {boolean} True if it is not empty
  */
 export function isNotEmpty(value) {
   return value !== null && value !== undefined && value.toString().trim() !== ''
 }
 
 /**
- * Valida se uma string tem o tamanho mínimo
- * @param {string} value - String para validar
- * @param {number} minLength - Tamanho mínimo
- * @returns {boolean} True se tiver o tamanho mínimo
+ * Validates if a string has the minimum length
+ * @param {string} value - String to validate
+ * @param {number} minLength - Minimum length
+ * @returns {boolean} True if it has the minimum length
  */
 export function hasMinLength(value, minLength) {
   return isNotEmpty(value) && value.toString().length >= minLength
 }
 
 /**
- * Valida se uma string tem o tamanho máximo
- * @param {string} value - String para validar
- * @param {number} maxLength - Tamanho máximo
- * @returns {boolean} True se tiver o tamanho máximo
+ * Validates if a string has the maximum length
+ * @param {string} value - String to validate
+ * @param {number} maxLength - Maximum length
+ * @returns {boolean} True if it has the maximum length
  */
 export function hasMaxLength(value, maxLength) {
   return !isNotEmpty(value) || value.toString().length <= maxLength
 }
 
 /**
- * Valida se uma string tem o tamanho exato
- * @param {string} value - String para validar
- * @param {number} length - Tamanho exato
- * @returns {boolean} True se tiver o tamanho exato
+ * Validates if a string has the exact length
+ * @param {string} value - String to validate
+ * @param {number} length - Exact length
+ * @returns {boolean} True if it has the exact length
  */
 export function hasExactLength(value, length) {
   return isNotEmpty(value) && value.toString().length === length
 }
 
 /**
- * Valida se uma URL é válida
- * @param {string} url - URL para validar
- * @returns {boolean} True se válida
+ * Validates if a URL is valid
+ * @param {string} url - URL to validate
+ * @returns {boolean} True if valid
  */
 export function isValidURL(url) {
   if (!url) return false
@@ -273,26 +273,26 @@ export function isValidURL(url) {
 }
 
 /**
- * Valida se um CEP é válido (formato brasileiro)
- * @param {string} cep - CEP para validar
- * @returns {boolean} True se válido
+ * Validates if a CEP is valid (Brazilian format)
+ * @param {string} cep - CEP to validate
+ * @returns {boolean} True if valid
  */
 export function isValidCEP(cep) {
   if (!cep) return false
   
-  // Remove caracteres não numéricos
+  // Remove non-numeric characters
   const cleanCEP = cep.replace(/\D/g, '')
   
-  // Verifica se tem 8 dígitos
+  // Check if it has 8 digits
   return cleanCEP.length === 8
 }
 
 /**
- * Valida se um valor está dentro de um range
- * @param {number} value - Valor para validar
- * @param {number} min - Valor mínimo
- * @param {number} max - Valor máximo
- * @returns {boolean} True se estiver no range
+ * Validates if a value is within a range
+ * @param {number} value - Value to validate
+ * @param {number} min - Minimum value
+ * @param {number} max - Maximum value
+ * @returns {boolean} True if it is within the range
  */
 export function isInRange(value, min, max) {
   if (!isValidNumber(value)) return false
@@ -302,28 +302,28 @@ export function isInRange(value, min, max) {
 }
 
 /**
- * Valida se um valor está em uma lista de opções
- * @param {any} value - Valor para validar
- * @param {array} options - Lista de opções válidas
- * @returns {boolean} True se estiver na lista
+ * Validates if a value is in a list of options
+ * @param {any} value - Value to validate
+ * @param {array} options - List of valid options
+ * @returns {boolean} True if it is in the list
  */
 export function isInOptions(value, options) {
   return options.includes(value)
 }
 
 /**
- * Valida se um valor é um array não vazio
- * @param {any} value - Valor para validar
- * @returns {boolean} True se for um array não vazio
+ * Validates if a value is a non-empty array
+ * @param {any} value - Value to validate
+ * @returns {boolean} True if it is a non-empty array
  */
 export function isValidArray(value) {
   return Array.isArray(value) && value.length > 0
 }
 
 /**
- * Valida se um objeto não está vazio
- * @param {any} value - Valor para validar
- * @returns {boolean} True se for um objeto não vazio
+ * Validates if an object is not empty
+ * @param {any} value - Value to validate
+ * @returns {boolean} True if it is a non-empty object
  */
 export function isValidObject(value) {
   return value !== null && typeof value === 'object' && Object.keys(value).length > 0

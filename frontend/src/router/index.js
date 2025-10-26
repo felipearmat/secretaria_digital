@@ -4,19 +4,19 @@ import store from '@/store'
 // Views
 import Login from '@/views/Login.vue'
 import Dashboard from '@/views/Dashboard.vue'
-import Agendamentos from '@/views/Agendamentos.vue'
-import AgendamentoForm from '@/views/AgendamentoForm.vue'
-import AgendamentoDetail from '@/views/AgendamentoDetail.vue'
-import Servicos from '@/views/Servicos.vue'
-import ServicoForm from '@/views/ServicoForm.vue'
-import Usuarios from '@/views/Usuarios.vue'
-import UsuarioForm from '@/views/UsuarioForm.vue'
-import Cupons from '@/views/Cupons.vue'
-import CupomForm from '@/views/CupomForm.vue'
-import Relatorios from '@/views/Relatorios.vue'
+import Appointments from '@/views/Appointments.vue'
+import AppointmentForm from '@/views/AppointmentForm.vue'
+import AppointmentDetail from '@/views/AppointmentDetail.vue'
+import Services from '@/views/Services.vue'
+import ServiceForm from '@/views/ServiceForm.vue'
+import Users from '@/views/Users.vue'
+import UserForm from '@/views/UserForm.vue'
+import Coupons from '@/views/Coupons.vue'
+import CouponForm from '@/views/CouponForm.vue'
+import Reports from '@/views/Reports.vue'
 import GoogleCalendarConfig from '@/views/GoogleCalendarConfig.vue'
-import Perfil from '@/views/Perfil.vue'
-import Configuracoes from '@/views/Configuracoes.vue'
+import Profile from '@/views/Profile.vue'
+import Settings from '@/views/Settings.vue'
 import NotFound from '@/views/NotFound.vue'
 
 const routes = [
@@ -43,136 +43,136 @@ const routes = [
     }
   },
   {
-    path: '/agendamentos',
-    name: 'Agendamentos',
-    component: Agendamentos,
+    path: '/appointments',
+    name: 'Appointments',
+    component: Appointments,
     meta: {
       requiresAuth: true,
-      title: 'Agendamentos'
+      title: 'Appointments'
     }
   },
   {
-    path: '/agendamentos/novo',
-    name: 'AgendamentoForm',
-    component: AgendamentoForm,
+    path: '/appointments/new',
+    name: 'AppointmentForm',
+    component: AppointmentForm,
     meta: {
       requiresAuth: true,
-      title: 'Novo Agendamento'
+      title: 'New Appointment'
     }
   },
   {
-    path: '/agendamentos/:id',
-    name: 'AgendamentoDetail',
-    component: AgendamentoDetail,
+    path: '/appointments/:id',
+    name: 'AppointmentDetail',
+    component: AppointmentDetail,
     meta: {
       requiresAuth: true,
-      title: 'Detalhes do Agendamento'
+      title: 'Appointment Details'
     }
   },
   {
-    path: '/agendamentos/:id/editar',
-    name: 'AgendamentoEdit',
-    component: AgendamentoForm,
+    path: '/appointments/:id/edit',
+    name: 'AppointmentEdit',
+    component: AppointmentForm,
     meta: {
       requiresAuth: true,
-      title: 'Editar Agendamento'
+      title: 'Edit Appointment'
     }
   },
   {
-    path: '/servicos',
-    name: 'Servicos',
-    component: Servicos,
+    path: '/services',
+    name: 'Services',
+    component: Services,
     meta: {
       requiresAuth: true,
-      title: 'Serviços'
+      title: 'Services'
     }
   },
   {
-    path: '/servicos/novo',
-    name: 'ServicoForm',
-    component: ServicoForm,
+    path: '/services/new',
+    name: 'ServiceForm',
+    component: ServiceForm,
     meta: {
       requiresAuth: true,
-      title: 'Novo Serviço'
+      title: 'New Service'
     }
   },
   {
-    path: '/servicos/:id/editar',
-    name: 'ServicoEdit',
-    component: ServicoForm,
+    path: '/services/:id/edit',
+    name: 'ServiceEdit',
+    component: ServiceForm,
     meta: {
       requiresAuth: true,
-      title: 'Editar Serviço'
+      title: 'Edit Service'
     }
   },
   {
-    path: '/usuarios',
-    name: 'Usuarios',
-    component: Usuarios,
+    path: '/users',
+    name: 'Users',
+    component: Users,
     meta: {
       requiresAuth: true,
-      requiresRole: ['admin', 'gerente'],
-      title: 'Usuários'
+      requiresRole: ['admin', 'manager'],
+      title: 'Users'
     }
   },
   {
-    path: '/usuarios/novo',
-    name: 'UsuarioForm',
-    component: UsuarioForm,
+    path: '/users/new',
+    name: 'UserForm',
+    component: UserForm,
     meta: {
       requiresAuth: true,
-      requiresRole: ['admin', 'gerente'],
-      title: 'Novo Usuário'
+      requiresRole: ['admin', 'manager'],
+      title: 'New User'
     }
   },
   {
-    path: '/usuarios/:id/editar',
-    name: 'UsuarioEdit',
-    component: UsuarioForm,
+    path: '/users/:id/edit',
+    name: 'UserEdit',
+    component: UserForm,
     meta: {
       requiresAuth: true,
-      requiresRole: ['admin', 'gerente'],
-      title: 'Editar Usuário'
+      requiresRole: ['admin', 'manager'],
+      title: 'Edit User'
     }
   },
   {
-    path: '/cupons',
-    name: 'Cupons',
-    component: Cupons,
+    path: '/coupons',
+    name: 'Coupons',
+    component: Coupons,
     meta: {
       requiresAuth: true,
-      requiresRole: ['admin', 'gerente'],
-      title: 'Cupons'
+      requiresRole: ['admin', 'manager'],
+      title: 'Coupons'
     }
   },
   {
-    path: '/cupons/novo',
-    name: 'CupomForm',
-    component: CupomForm,
+    path: '/coupons/new',
+    name: 'CouponForm',
+    component: CouponForm,
     meta: {
       requiresAuth: true,
-      requiresRole: ['admin', 'gerente'],
-      title: 'Novo Cupom'
+      requiresRole: ['admin', 'manager'],
+      title: 'New Coupon'
     }
   },
   {
-    path: '/cupons/:id/editar',
-    name: 'CupomEdit',
-    component: CupomForm,
+    path: '/coupons/:id/edit',
+    name: 'CouponEdit',
+    component: CouponForm,
     meta: {
       requiresAuth: true,
-      requiresRole: ['admin', 'gerente'],
-      title: 'Editar Cupom'
+      requiresRole: ['admin', 'manager'],
+      title: 'Edit Coupon'
     }
   },
   {
-    path: '/relatorios',
-    name: 'Relatorios',
-    component: Relatorios,
+    path: '/reports',
+    name: 'Reports',
+    component: Reports,
     meta: {
       requiresAuth: true,
-      requiresRole: ['admin', 'gerente', 'ator'],
-      title: 'Relatórios'
+      requiresRole: ['admin', 'manager', 'actor'],
+      title: 'Reports'
     }
   },
   {
@@ -185,21 +185,21 @@ const routes = [
     }
   },
   {
-    path: '/perfil',
-    name: 'Perfil',
-    component: Perfil,
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
     meta: {
       requiresAuth: true,
-      title: 'Meu Perfil'
+      title: 'My Profile'
     }
   },
   {
-    path: '/configuracoes',
-    name: 'Configuracoes',
-    component: Configuracoes,
+    path: '/settings',
+    name: 'Settings',
+    component: Settings,
     meta: {
       requiresAuth: true,
-      title: 'Configurações'
+      title: 'Settings'
     }
   },
   {
@@ -207,7 +207,7 @@ const routes = [
     name: 'NotFound',
     component: NotFound,
     meta: {
-      title: 'Página não encontrada'
+      title: 'Page not found'
     }
   }
 ]
@@ -217,9 +217,9 @@ const router = createRouter({
   routes
 })
 
-// Guard de navegação
+// Navigation guard
 router.beforeEach(async (to, from, next) => {
-  // Verifica se a rota requer autenticação
+  // Checks if route requires authentication
   if (to.meta.requiresAuth) {
     const isAuthenticated = store.getters['auth/isAuthenticated']
     
@@ -228,7 +228,7 @@ router.beforeEach(async (to, from, next) => {
       return
     }
     
-    // Verifica se o usuário tem o role necessário
+    // Checks if user has required role
     if (to.meta.requiresRole) {
       const userRole = store.getters['auth/userRole']
       const hasRequiredRole = to.meta.requiresRole.includes(userRole)
@@ -240,7 +240,7 @@ router.beforeEach(async (to, from, next) => {
     }
   }
   
-  // Se já está logado e tenta acessar login, redireciona para dashboard
+  // If already logged in and tries to access login, redirects to dashboard
   if (to.path === '/login' && store.getters['auth/isAuthenticated']) {
     next('/dashboard')
     return
@@ -249,9 +249,9 @@ router.beforeEach(async (to, from, next) => {
   next()
 })
 
-// Atualiza o título da página
+// Updates page title
 router.afterEach((to) => {
-  document.title = `${to.meta.title || 'Secretaria Virtual'} - Secretaria Virtual`
+  document.title = `${to.meta.title || 'Digital Secretary'} - Digital Secretary`
 })
 
 export default router

@@ -44,11 +44,11 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    'apps.empresas',
-    'apps.autenticacao',
-    'apps.agendamentos',
-    'apps.notificacoes',
-    'apps.pagamentos',
+    'apps.companies',
+    'apps.authentication',
+    'apps.appointments',
+    'apps.notifications',
+    'apps.payments',
     'apps.google_calendar',
     'apps.feature_flags',
 ]
@@ -145,7 +145,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom User Model
-AUTH_USER_MODEL = 'autenticacao.User'
+AUTH_USER_MODEL = 'authentication.User'
 
 # Django REST Framework
 REST_FRAMEWORK = {
@@ -253,4 +253,4 @@ MODELTRANSLATION_FALLBACK_LANGUAGES = ('pt-br', 'en')
 # Rosetta settings
 ROSETTA_WSGI_AUTO_RELOAD = False  # Disable in tests
 ROSETTA_UWSGI_AUTO_RELOAD = False  # Disable in tests
-ROSETTA_ACCESS_CONTROL_FUNCTION = 'apps.autenticacao.utils.can_translate'
+ROSETTA_ACCESS_CONTROL_FUNCTION = 'apps.authentication.utils.can_translate'

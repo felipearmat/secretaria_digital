@@ -36,11 +36,11 @@ def run_tests():
     
     # List of apps to test
     test_apps = [
-        'apps.empresas',
-        'apps.autenticacao', 
-        'apps.agendamentos',
-        'apps.pagamentos',
-        'apps.notificacoes',
+        'apps.companies',
+        'apps.authentication', 
+        'apps.appointments',
+        'apps.payments',
+        'apps.notifications',
         'apps.feature_flags'
     ]
     

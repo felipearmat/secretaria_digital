@@ -17,45 +17,46 @@ from .serializers import (
 )
 from .services import GoogleCalendarService, GoogleCalendarOAuthService
 from .tasks import (
-    sync_agendamento_to_google_calendar,
-    remove_agendamento_from_google_calendar,
+    sync_appointment_to_google_calendar,
+    remove_appointment_from_google_calendar,
     sync_from_google_calendar,
     sync_all_google_calendar_integrations
 )
 
 
 class GoogleCalendarIntegrationViewSet(viewsets.ModelViewSet):
-    """ViewSet para gerenciar integrações Google Calendar."""
+    """ViewSet to manage Google Calendar integrations."""
     
+    queryset = GoogleCalendarIntegration.objects.all()
     serializer_class = GoogleCalendarIntegrationSerializer
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
-        """Filtra integrações baseado no usuário."""
+        """Filters integrations based on user."""
         user = self.request.user
         
         if user.is_superadmin:
             return GoogleCalendarIntegration.objects.all()
         elif user.is_admin:
             return GoogleCalendarIntegration.objects.filter(
-                usuario__empresa=user.empresa
+                user__company=user.company
             )
         else:
-            return GoogleCalendarIntegration.objects.filter(usuario=user)
+            return GoogleCalendarIntegration.objects.filter(user=user)
     
     def get_serializer_class(self):
-        """Retorna o serializer apropriado."""
+        """Returns the appropriate serializer."""
         if self.action == 'create':
             return GoogleCalendarIntegrationCreateSerializer
         return GoogleCalendarIntegrationSerializer
     
     def perform_create(self, serializer):
-        """Cria uma nova integração."""
-        serializer.save(usuario=self.request.user)
+        """Creates a new integration."""
+        serializer.save(user=self.request.user)
     
     @action(detail=True, methods=['post'])
     def authorize(self, request, pk=None):
-        """Inicia processo de autorização OAuth."""
+        """Initiates OAuth authorization process."""
         integration = self.get_object()
         
         serializer = GoogleCalendarOAuthSerializer(
@@ -70,7 +71,7 @@ class GoogleCalendarIntegrationViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'])
     def callback(self, request, pk=None):
-        """Processa callback OAuth."""
+        """Processes OAuth callback."""
         integration = self.get_object()
         
         serializer = GoogleCalendarOAuthCallbackSerializer(
@@ -85,13 +86,13 @@ class GoogleCalendarIntegrationViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'])
     def sync(self, request, pk=None):
-        """Sincroniza com Google Calendar."""
+        """Synchronizes with Google Calendar."""
         integration = self.get_object()
         
         serializer = GoogleCalendarSyncSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        # Agenda sincronização
+        # Schedule synchronization
         sync_from_google_calendar.delay(
             integration.id,
             serializer.validated_data['days_back'],
@@ -99,78 +100,79 @@ class GoogleCalendarIntegrationViewSet(viewsets.ModelViewSet):
         )
         
         return Response({
-            'message': 'Sincronização agendada com sucesso',
+            'message': 'Synchronization scheduled successfully',
             'integration_id': integration.id
         }, status=status.HTTP_202_ACCEPTED)
     
     @action(detail=True, methods=['post'])
     def test_connection(self, request, pk=None):
-        """Testa conexão com Google Calendar."""
+        """Tests connection with Google Calendar."""
         integration = self.get_object()
         
         try:
             service = GoogleCalendarService(integration)
-            # Tenta listar calendários para testar a conexão
+            # Tries to list calendars to test the connection
             calendar_list = service.service.calendarList().list().execute()
             
             return Response({
                 'status': 'success',
-                'message': 'Conexão com Google Calendar estabelecida com sucesso',
+                'message': 'Google Calendar connection established successfully',
                 'calendars_count': len(calendar_list.get('items', []))
             }, status=status.HTTP_200_OK)
             
         except Exception as e:
             return Response({
                 'status': 'error',
-                'message': f'Erro ao conectar com Google Calendar: {str(e)}'
+                'message': f'Error connecting to Google Calendar: {str(e)}'
             }, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=True, methods=['post'])
     def refresh_token(self, request, pk=None):
-        """Renova token de acesso."""
+        """Renews access token."""
         integration = self.get_object()
         
         try:
             service = GoogleCalendarService(integration)
-            # O serviço automaticamente renova o token se necessário
+            # The service automatically renews the token if necessary
             
             return Response({
                 'status': 'success',
-                'message': 'Token renovado com sucesso',
+                'message': 'Token renewed successfully',
                 'expires_at': integration.token_expires_at
             }, status=status.HTTP_200_OK)
             
         except Exception as e:
             return Response({
                 'status': 'error',
-                'message': f'Erro ao renovar token: {str(e)}'
+                'message': f'Error renewing token: {str(e)}'
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GoogleCalendarEventViewSet(viewsets.ReadOnlyModelViewSet):
-    """ViewSet para visualizar eventos Google Calendar."""
+    """ViewSet to view Google Calendar events."""
     
+    queryset = GoogleCalendarEvent.objects.all()
     serializer_class = GoogleCalendarEventSerializer
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
-        """Filtra eventos baseado no usuário."""
+        """Filters events based on user."""
         user = self.request.user
         
         if user.is_superadmin:
             return GoogleCalendarEvent.objects.all()
         elif user.is_admin:
             return GoogleCalendarEvent.objects.filter(
-                agendamento__ator__empresa=user.empresa
+                appointment__actor__company=user.company
             )
         else:
             return GoogleCalendarEvent.objects.filter(
-                Q(agendamento__ator=user) | Q(agendamento__cliente=user)
+                Q(appointment__actor=user) | Q(appointment__client=user)
             )
     
     @action(detail=False, methods=['post'])
     def create_event(self, request):
-        """Cria evento no Google Calendar."""
+        """Creates event in Google Calendar."""
         serializer = GoogleCalendarEventCreateSerializer(
             data=request.data,
             context={'request': request}
@@ -183,73 +185,74 @@ class GoogleCalendarEventViewSet(viewsets.ReadOnlyModelViewSet):
     
     @action(detail=True, methods=['post'])
     def sync_to_google(self, request, pk=None):
-        """Sincroniza evento específico para Google Calendar."""
+        """Synchronizes specific event to Google Calendar."""
         event = self.get_object()
         
-        # Agenda sincronização
-        sync_agendamento_to_google_calendar.delay(event.agendamento.id)
+        # Schedule synchronization
+        sync_appointment_to_google_calendar.delay(event.appointment.id)
         
         return Response({
-            'message': 'Sincronização agendada com sucesso',
+            'message': 'Synchronization scheduled successfully',
             'event_id': event.id
         }, status=status.HTTP_202_ACCEPTED)
     
     @action(detail=True, methods=['post'])
     def remove_from_google(self, request, pk=None):
-        """Remove evento do Google Calendar."""
+        """Removes event from Google Calendar."""
         event = self.get_object()
         
-        # Agenda remoção
-        remove_agendamento_from_google_calendar.delay(event.agendamento.id)
+        # Schedule removal
+        remove_appointment_from_google_calendar.delay(event.appointment.id)
         
         return Response({
-            'message': 'Remoção agendada com sucesso',
+            'message': 'Removal scheduled successfully',
             'event_id': event.id
         }, status=status.HTTP_202_ACCEPTED)
 
 
 class GoogleCalendarSyncLogViewSet(viewsets.ReadOnlyModelViewSet):
-    """ViewSet para visualizar logs de sincronização."""
+    """ViewSet to view synchronization logs."""
     
+    queryset = GoogleCalendarSyncLog.objects.all()
     serializer_class = GoogleCalendarSyncLogSerializer
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
-        """Filtra logs baseado no usuário."""
+        """Filters logs based on user."""
         user = self.request.user
         
         if user.is_superadmin:
             return GoogleCalendarSyncLog.objects.all()
         elif user.is_admin:
             return GoogleCalendarSyncLog.objects.filter(
-                integration__usuario__empresa=user.empresa
+                integration__user__company=user.company
             )
         else:
             return GoogleCalendarSyncLog.objects.filter(
-                integration__usuario=user
+                integration__user=user
             )
     
     @action(detail=False, methods=['post'])
     def sync_all(self, request):
-        """Sincroniza todas as integrações ativas."""
-        # Agenda sincronização global
+        """Synchronizes all active integrations."""
+        # Schedule global synchronization
         sync_all_google_calendar_integrations.delay()
         
         return Response({
-            'message': 'Sincronização global agendada com sucesso'
+            'message': 'Global synchronization scheduled successfully'
         }, status=status.HTTP_202_ACCEPTED)
     
     @action(detail=False, methods=['get'])
     def stats(self, request):
-        """Retorna estatísticas de sincronização."""
+        """Returns synchronization statistics."""
         queryset = self.get_queryset()
         
-        # Estatísticas gerais
+        # General statistics
         total_syncs = queryset.count()
         successful_syncs = queryset.filter(status='success').count()
         error_syncs = queryset.filter(status='error').count()
         
-        # Estatísticas de eventos
+        # Event statistics
         total_events_created = queryset.aggregate(
             total=models.Sum('events_created')
         )['total'] or 0
@@ -262,7 +265,7 @@ class GoogleCalendarSyncLogViewSet(viewsets.ReadOnlyModelViewSet):
             total=models.Sum('events_deleted')
         )['total'] or 0
         
-        # Última sincronização
+        # Last synchronization
         last_sync = queryset.order_by('-started_at').first()
         
         return Response({

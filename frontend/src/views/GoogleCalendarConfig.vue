@@ -9,7 +9,7 @@
               Google Calendar
             </h1>
             <p class="text-subtitle1 text-grey-darken-1">
-              Configure a integração com Google Calendar
+              Configure Google Calendar integration
             </p>
           </div>
           
@@ -36,7 +36,7 @@
       </v-col>
     </v-row>
 
-    <!-- Status da Integração -->
+    <!-- Integration Status -->
     <v-row class="mb-6">
       <v-col cols="12">
         <v-card>
@@ -44,7 +44,7 @@
             <v-icon class="mr-3" :color="integrationStatus.isConnected ? 'success' : 'warning'">
               {{ integrationStatus.isConnected ? 'mdi-check-circle' : 'mdi-alert-circle' }}
             </v-icon>
-            Status da Integração
+            Integration Status
           </v-card-title>
           
           <v-card-text>
@@ -54,13 +54,13 @@
               class="mb-4"
             >
               <div v-if="integrationStatus.needsSetup">
-                <strong>Configuração Necessária:</strong> Você precisa configurar a integração com Google Calendar.
+                <strong>Setup Required:</strong> You need to configure Google Calendar integration.
               </div>
               <div v-else-if="integrationStatus.needsReauth">
-                <strong>Reautorização Necessária:</strong> Sua sessão com Google Calendar expirou. Clique em "Reautorizar" para continuar.
+                <strong>Re-authorization Required:</strong> Your Google Calendar session has expired. Click "Re-authorize" to continue.
               </div>
               <div v-else-if="integrationStatus.isConnected">
-                <strong>Conectado:</strong> Sua integração com Google Calendar está ativa e funcionando.
+                <strong>Connected:</strong> Your Google Calendar integration is active and working.
               </div>
             </v-alert>
             
@@ -69,7 +69,7 @@
                 :color="currentIntegration.sync_enabled ? 'success' : 'error'"
                 variant="flat"
               >
-                {{ currentIntegration.sync_enabled ? 'Sincronização Ativa' : 'Sincronização Desabilitada' }}
+                {{ currentIntegration.sync_enabled ? 'Sync Active' : 'Sync Disabled' }}
               </v-chip>
               
               <v-chip
@@ -84,7 +84,7 @@
                 color="info"
                 variant="flat"
               >
-                Última sincronização: {{ formatDateTime(currentIntegration.last_sync_at) }}
+                Last sync: {{ formatDateTime(currentIntegration.last_sync_at) }}
               </v-chip>
             </div>
           </v-card-text>
@@ -92,11 +92,11 @@
       </v-col>
     </v-row>
 
-    <!-- Configuração da Integração -->
+    <!-- Integration Configuration -->
     <v-row v-if="!integrationStatus.hasIntegration || integrationStatus.needsReauth">
       <v-col cols="12">
         <v-card>
-          <v-card-title>Configurar Integração</v-card-title>
+          <v-card-title>Configure Integration</v-card-title>
           
           <v-card-text>
             <v-form ref="form" v-model="valid" @submit.prevent="handleSubmit">
@@ -104,8 +104,8 @@
                 <v-col cols="12" md="6">
                   <v-text-field
                     v-model="form.calendar_id"
-                    label="ID do Calendário"
-                    hint="Deixe vazio para usar o calendário principal"
+                    label="Calendar ID"
+                    hint="Leave empty to use the primary calendar"
                     variant="outlined"
                     :rules="calendarIdRules"
                   />
@@ -114,7 +114,7 @@
                 <v-col cols="12" md="6">
                   <v-select
                     v-model="form.sync_direction"
-                    label="Direção da Sincronização"
+                    label="Sync Direction"
                     :items="syncDirectionOptions"
                     variant="outlined"
                     :rules="syncDirectionRules"
@@ -124,13 +124,13 @@
                 <v-col cols="12">
                   <v-switch
                     v-model="form.sync_enabled"
-                    label="Habilitar Sincronização"
+                    label="Enable Sync"
                     color="primary"
                   />
                 </v-col>
                 
                 <v-col cols="12">
-                  <h3 class="text-h6 mb-4">Notificações</h3>
+                  <h3 class="text-h6 mb-4">Notifications</h3>
                   
                   <v-row>
                     <v-col cols="12" md="4">
@@ -183,18 +183,18 @@
       </v-col>
     </v-row>
 
-    <!-- Configuração Existente -->
+    <!-- Existing Configuration -->
     <v-row v-else-if="currentIntegration">
       <v-col cols="12">
         <v-card>
-          <v-card-title>Configuração Atual</v-card-title>
+          <v-card-title>Current Configuration</v-card-title>
           
           <v-card-text>
             <v-row>
               <v-col cols="12" md="6">
                 <v-text-field
                   v-model="currentIntegration.calendar_id"
-                  label="ID do Calendário"
+                  label="Calendar ID"
                   variant="outlined"
                   readonly
                 />
@@ -203,7 +203,7 @@
               <v-col cols="12" md="6">
                 <v-text-field
                   :value="getSyncDirectionText(currentIntegration.sync_direction)"
-                  label="Direção da Sincronização"
+                  label="Sync Direction"
                   variant="outlined"
                   readonly
                 />
@@ -212,7 +212,7 @@
               <v-col cols="12">
                 <v-switch
                   v-model="currentIntegration.sync_enabled"
-                  label="Sincronização Habilitada"
+                  label="Sync Enabled"
                   color="primary"
                   @change="updateSyncEnabled"
                 />
@@ -234,7 +234,7 @@
               @click="testConnection"
               :loading="loading"
             >
-              Testar Conexão
+              Test Connection
             </v-btn>
             <v-btn
               color="warning"
@@ -248,18 +248,18 @@
               @click="deleteIntegration"
               :loading="loading"
             >
-              Remover Integração
+              Remove Integration
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
 
-    <!-- Estatísticas de Sincronização -->
+    <!-- Sync Statistics -->
     <v-row v-if="syncStats" class="mb-6">
       <v-col cols="12">
         <v-card>
-          <v-card-title>Estatísticas de Sincronização</v-card-title>
+          <v-card-title>Sync Statistics</v-card-title>
           
           <v-card-text>
             <v-row>
@@ -270,7 +270,7 @@
                       {{ syncStats.total_syncs }}
                     </div>
                     <div class="text-subtitle2 text-white">
-                      Total de Sincronizações
+                      Total Syncs
                     </div>
                   </v-card-text>
                 </v-card>
@@ -283,7 +283,7 @@
                       {{ syncStats.successful_syncs }}
                     </div>
                     <div class="text-subtitle2 text-white">
-                      Sincronizações Bem-sucedidas
+                      Successful Syncs
                     </div>
                   </v-card-text>
                 </v-card>
@@ -296,7 +296,7 @@
                       {{ syncStats.error_syncs }}
                     </div>
                     <div class="text-subtitle2 text-white">
-                      Sincronizações com Erro
+                      Failed Syncs
                     </div>
                   </v-card-text>
                 </v-card>
@@ -320,12 +320,12 @@
       </v-col>
     </v-row>
 
-    <!-- Logs de Sincronização -->
+    <!-- Sync Logs -->
     <v-row>
       <v-col cols="12">
         <v-card>
           <v-card-title class="d-flex align-center justify-space-between">
-            <span>Logs de Sincronização</span>
+            <span>Sync Logs</span>
             <v-btn
               variant="outlined"
               prepend-icon="mdi-refresh"
@@ -359,7 +359,7 @@
                 {{ getSyncTypeText(item.sync_type) }}
               </template>
               
-              <!-- Duração -->
+              <!-- Duration -->
               <template v-slot:item.duration_display="{ item }">
                 {{ item.duration_display || '-' }}
               </template>
@@ -374,25 +374,25 @@
       </v-col>
     </v-row>
 
-    <!-- Dialog de Autorização -->
+    <!-- Authorization Dialog -->
     <v-dialog v-model="authDialog.show" max-width="600">
       <v-card>
         <v-card-title>Autorizar Google Calendar</v-card-title>
         
         <v-card-text>
-          <p>Para usar a integração com Google Calendar, você precisa autorizar o acesso ao seu calendário.</p>
+          <p>To use Google Calendar integration, you need to authorize access to your calendar.</p>
           
           <v-alert type="info" variant="tonal" class="mb-4">
-            <strong>Permissões necessárias:</strong>
+            <strong>Required permissions:</strong>
             <ul class="mt-2">
-              <li>Ler eventos do calendário</li>
-              <li>Criar eventos no calendário</li>
-              <li>Atualizar eventos no calendário</li>
-              <li>Excluir eventos do calendário</li>
+              <li>Read calendar events</li>
+              <li>Create calendar events</li>
+              <li>Update calendar events</li>
+              <li>Delete calendar events</li>
             </ul>
           </v-alert>
           
-          <p>Clique no botão abaixo para ser redirecionado para o Google e autorizar o acesso.</p>
+          <p>Click the button below to be redirected to Google and authorize access.</p>
         </v-card-text>
         
         <v-card-actions>
@@ -451,19 +451,19 @@ export default {
         { title: 'Tipo', key: 'sync_type' },
         { title: 'Status', key: 'status' },
         { title: 'Eventos', key: 'events_summary' },
-        { title: 'Duração', key: 'duration_display' },
-        { title: 'Iniciado em', key: 'started_at' },
-        { title: 'Concluído em', key: 'completed_at' }
+        { title: 'Duration', key: 'duration_display' },
+        { title: 'Started at', key: 'started_at' },
+        { title: 'Completed at', key: 'completed_at' }
       ],
       authDialog: {
         show: false,
         url: ''
       },
       calendarIdRules: [
-        v => !v || v.length <= 255 || 'ID do calendário deve ter no máximo 255 caracteres'
+        v => !v || v.length <= 255 || 'Calendar ID must have at most 255 characters'
       ],
       syncDirectionRules: [
-        v => !!v || 'Direção da sincronização é obrigatória'
+        v => !!v || 'Sync direction is required'
       ]
     }
   },
@@ -515,29 +515,29 @@ export default {
       this.loading = true
       try {
         if (this.integrationStatus.hasIntegration) {
-          // Atualizar integração existente
+          // Update existing integration
           const result = await this.updateIntegration({
             id: this.currentIntegration.id,
             data: this.form
           })
           
           if (result.success) {
-            this.$toast.success('Integração atualizada com sucesso')
+            this.$toast.success('Integration updated successfully')
             await this.loadData()
           }
         } else {
-          // Criar nova integração
+          // Create new integration
           const result = await this.createIntegration(this.form)
           
           if (result.success) {
-            this.$toast.success('Integração criada com sucesso')
+            this.$toast.success('Integration created successfully')
             await this.loadData()
             await this.checkStatus()
           }
         }
       } catch (error) {
-        console.error('Erro ao salvar integração:', error)
-        this.$toast.error('Erro ao salvar integração')
+        console.error('Error saving integration:', error)
+        this.$toast.error('Error saving integration')
       } finally {
         this.loading = false
       }
@@ -555,8 +555,8 @@ export default {
           this.authDialog.show = true
         }
       } catch (error) {
-        console.error('Erro ao iniciar autorização:', error)
-        this.$toast.error('Erro ao iniciar autorização')
+        console.error('Error starting authorization:', error)
+        this.$toast.error('Error starting authorization')
       } finally {
         this.loading = false
       }
@@ -570,11 +570,11 @@ export default {
         const result = await this.testConnection(this.currentIntegration.id)
         
         if (result.success) {
-          this.$toast.success('Conexão testada com sucesso')
+          this.$toast.success('Connection tested successfully')
         }
       } catch (error) {
-        console.error('Erro ao testar conexão:', error)
-        this.$toast.error('Erro ao testar conexão')
+        console.error('Error testing connection:', error)
+        this.$toast.error('Error testing connection')
       } finally {
         this.loading = false
       }
@@ -602,7 +602,7 @@ export default {
     async deleteIntegration() {
       if (!this.currentIntegration) return
       
-      if (!confirm('Tem certeza que deseja remover a integração com Google Calendar?')) {
+      if (!confirm('Are you sure you want to remove Google Calendar integration?')) {
         return
       }
       
@@ -611,13 +611,13 @@ export default {
         const result = await this.deleteIntegration(this.currentIntegration.id)
         
         if (result.success) {
-          this.$toast.success('Integração removida com sucesso')
+          this.$toast.success('Integration removed successfully')
           await this.loadData()
           await this.checkStatus()
         }
       } catch (error) {
-        console.error('Erro ao remover integração:', error)
-        this.$toast.error('Erro ao remover integração')
+        console.error('Error removing integration:', error)
+        this.$toast.error('Error removing integration')
       } finally {
         this.loading = false
       }
@@ -632,10 +632,10 @@ export default {
           data: { sync_enabled: this.currentIntegration.sync_enabled }
         })
         
-        this.$toast.success('Configuração atualizada')
+        this.$toast.success('Configuration updated')
       } catch (error) {
-        console.error('Erro ao atualizar configuração:', error)
-        this.$toast.error('Erro ao atualizar configuração')
+        console.error('Error updating configuration:', error)
+        this.$toast.error('Error updating configuration')
       }
     },
     
@@ -645,7 +645,7 @@ export default {
         const result = await this.syncAll()
         
         if (result.success) {
-          this.$toast.success('Sincronização global iniciada')
+          this.$toast.success('Global sync started')
           await this.loadData()
         }
       } catch (error) {
@@ -714,7 +714,7 @@ export default {
         'full': 'Completa',
         'incremental': 'Incremental',
         'manual': 'Manual',
-        'automatic': 'Automática'
+        'automatic': 'Automatic'
       }
       return texts[type] || type
     }

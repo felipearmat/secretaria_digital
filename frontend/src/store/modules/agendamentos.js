@@ -1,8 +1,8 @@
 import api from '@/services/api'
 
 const state = {
-  agendamentos: [],
-  agendamento: null,
+  appointments: [],
+  appointment: null,
   loading: false,
   error: null,
   pagination: {
@@ -12,31 +12,31 @@ const state = {
   },
   filters: {
     status: '',
-    ator: '',
-    data_inicio: '',
-    data_fim: '',
+    actor: '',
+    start_date: '',
+    end_date: '',
     search: ''
   }
 }
 
 const mutations = {
-  SET_AGENDAMENTOS(state, agendamentos) {
-    state.agendamentos = agendamentos
+  SET_APPOINTMENTS(state, appointments) {
+    state.appointments = appointments
   },
-  SET_AGENDAMENTO(state, agendamento) {
-    state.agendamento = agendamento
+  SET_APPOINTMENT(state, appointment) {
+    state.appointment = appointment
   },
-  ADD_AGENDAMENTO(state, agendamento) {
-    state.agendamentos.unshift(agendamento)
+  ADD_APPOINTMENT(state, appointment) {
+    state.appointments.unshift(appointment)
   },
-  UPDATE_AGENDAMENTO(state, agendamento) {
-    const index = state.agendamentos.findIndex(a => a.id === agendamento.id)
+  UPDATE_APPOINTMENT(state, appointment) {
+    const index = state.appointments.findIndex(a => a.id === appointment.id)
     if (index !== -1) {
-      state.agendamentos.splice(index, 1, agendamento)
+      state.appointments.splice(index, 1, appointment)
     }
   },
-  REMOVE_AGENDAMENTO(state, id) {
-    state.agendamentos = state.agendamentos.filter(a => a.id !== id)
+  REMOVE_APPOINTMENT(state, id) {
+    state.appointments = state.appointments.filter(a => a.id !== id)
   },
   SET_LOADING(state, loading) {
     state.loading = loading
@@ -53,16 +53,16 @@ const mutations = {
   CLEAR_FILTERS(state) {
     state.filters = {
       status: '',
-      ator: '',
-      data_inicio: '',
-      data_fim: '',
+      actor: '',
+      start_date: '',
+      end_date: '',
       search: ''
     }
   }
 }
 
 const actions = {
-  async fetchAgendamentos({ commit, state }, params = {}) {
+  async fetchAppointments({ commit, state }, params = {}) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
@@ -73,16 +73,16 @@ const actions = {
         ...params
       }
       
-      // Remove parâmetros vazios
+      // Remove empty parameters
       Object.keys(queryParams).forEach(key => {
         if (queryParams[key] === '' || queryParams[key] === null) {
           delete queryParams[key]
         }
       })
       
-      const response = await api.get('/agendamentos/agendamentos/', { params: queryParams })
+      const response = await api.get('/appointments/appointments/', { params: queryParams })
       
-      commit('SET_AGENDAMENTOS', response.data.results || response.data)
+      commit('SET_APPOINTMENTS', response.data.results || response.data)
       
       if (response.data.count !== undefined) {
         commit('SET_PAGINATION', {
@@ -94,7 +94,7 @@ const actions = {
       
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar agendamentos'
+      const message = error.response?.data?.error || 'Error loading appointments'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -102,16 +102,16 @@ const actions = {
     }
   },
 
-  async fetchAgendamento({ commit }, id) {
+  async fetchAppointment({ commit }, id) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.get(`/agendamentos/agendamentos/${id}/`)
-      commit('SET_AGENDAMENTO', response.data)
+      const response = await api.get(`/appointments/appointments/${id}/`)
+      commit('SET_APPOINTMENT', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar agendamento'
+      const message = error.response?.data?.error || 'Error loading appointment'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -119,16 +119,16 @@ const actions = {
     }
   },
 
-  async createAgendamento({ commit }, agendamentoData) {
+  async createAppointment({ commit }, appointmentData) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.post('/agendamentos/agendamentos/', agendamentoData)
-      commit('ADD_AGENDAMENTO', response.data)
+      const response = await api.post('/appointments/appointments/', appointmentData)
+      commit('ADD_APPOINTMENT', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao criar agendamento'
+      const message = error.response?.data?.error || 'Error creating appointment'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -136,16 +136,16 @@ const actions = {
     }
   },
 
-  async updateAgendamento({ commit }, { id, data }) {
+  async updateAppointment({ commit }, { id, data }) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.patch(`/agendamentos/agendamentos/${id}/`, data)
-      commit('UPDATE_AGENDAMENTO', response.data)
+      const response = await api.patch(`/appointments/appointments/${id}/`, data)
+      commit('UPDATE_APPOINTMENT', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao atualizar agendamento'
+      const message = error.response?.data?.error || 'Error updating appointment'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -153,16 +153,16 @@ const actions = {
     }
   },
 
-  async deleteAgendamento({ commit }, id) {
+  async deleteAppointment({ commit }, id) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      await api.delete(`/agendamentos/agendamentos/${id}/`)
-      commit('REMOVE_AGENDAMENTO', id)
+      await api.delete(`/appointments/appointments/${id}/`)
+      commit('REMOVE_APPOINTMENT', id)
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao excluir agendamento'
+      const message = error.response?.data?.error || 'Error deleting appointment'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -170,16 +170,16 @@ const actions = {
     }
   },
 
-  async confirmAgendamento({ commit }, id) {
+  async confirmAppointment({ commit }, id) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.post(`/agendamentos/agendamentos/${id}/confirmar/`)
-      commit('UPDATE_AGENDAMENTO', response.data)
+      const response = await api.post(`/appointments/appointments/${id}/confirm/`)
+      commit('UPDATE_APPOINTMENT', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao confirmar agendamento'
+      const message = error.response?.data?.error || 'Error confirming appointment'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -187,16 +187,16 @@ const actions = {
     }
   },
 
-  async cancelAgendamento({ commit }, id) {
+  async cancelAppointment({ commit }, id) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.post(`/agendamentos/agendamentos/${id}/cancelar/`)
-      commit('UPDATE_AGENDAMENTO', response.data)
+      const response = await api.post(`/appointments/appointments/${id}/cancel/`)
+      commit('UPDATE_APPOINTMENT', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao cancelar agendamento'
+      const message = error.response?.data?.error || 'Error canceling appointment'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -204,17 +204,17 @@ const actions = {
     }
   },
 
-  async getDisponibilidade({ commit }, { atorId, data }) {
+  async getAvailability({ commit }, { actorId, date }) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.get('/agendamentos/agendamentos/disponibilidade/', {
-        params: { ator_id: atorId, data }
+      const response = await api.get('/appointments/appointments/availability/', {
+        params: { actor_id: actorId, date }
       })
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar disponibilidade'
+      const message = error.response?.data?.error || 'Error loading availability'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -232,42 +232,42 @@ const actions = {
 }
 
 const getters = {
-  agendamentos: state => state.agendamentos,
-  agendamento: state => state.agendamento,
+  appointments: state => state.appointments,
+  appointment: state => state.appointment,
   loading: state => state.loading,
   error: state => state.error,
   pagination: state => state.pagination,
   filters: state => state.filters,
   
-  agendamentosByStatus: state => status => {
-    return state.agendamentos.filter(a => a.status === status)
+  appointmentsByStatus: state => status => {
+    return state.appointments.filter(a => a.status === status)
   },
   
-  agendamentosByAtor: state => atorId => {
-    return state.agendamentos.filter(a => a.ator === atorId)
+  appointmentsByActor: state => actorId => {
+    return state.appointments.filter(a => a.actor === actorId)
   },
   
-  agendamentosByDate: state => date => {
-    return state.agendamentos.filter(a => {
-      const agendamentoDate = new Date(a.inicio).toDateString()
+  appointmentsByDate: state => date => {
+    return state.appointments.filter(a => {
+      const appointmentDate = new Date(a.start_time).toDateString()
       const filterDate = new Date(date).toDateString()
-      return agendamentoDate === filterDate
+      return appointmentDate === filterDate
     })
   },
   
-  agendamentosHoje: state => {
-    const hoje = new Date().toDateString()
-    return state.agendamentos.filter(a => {
-      const agendamentoDate = new Date(a.inicio).toDateString()
-      return agendamentoDate === hoje
+  todayAppointments: state => {
+    const today = new Date().toDateString()
+    return state.appointments.filter(a => {
+      const appointmentDate = new Date(a.start_time).toDateString()
+      return appointmentDate === today
     })
   },
   
-  proximosAgendamentos: state => {
-    const agora = new Date()
-    return state.agendamentos
-      .filter(a => new Date(a.inicio) > agora)
-      .sort((a, b) => new Date(a.inicio) - new Date(b.inicio))
+  upcomingAppointments: state => {
+    const now = new Date()
+    return state.appointments
+      .filter(a => new Date(a.start_time) > now)
+      .sort((a, b) => new Date(a.start_time) - new Date(b.start_time))
       .slice(0, 5)
   }
 }

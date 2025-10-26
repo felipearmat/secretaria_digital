@@ -47,16 +47,16 @@ const actions = {
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.get('/notificacoes/notificacoes/')
+      const response = await api.get('/notifications/notifications/')
       commit('SET_NOTIFICATIONS', response.data.results || response.data)
       
-      // Conta notificações não lidas
+      // Count unread notifications
       const unreadCount = (response.data.results || response.data).filter(n => !n.read).length
       commit('SET_UNREAD_COUNT', unreadCount)
       
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar notificações'
+      const message = error.response?.data?.error || 'Error loading notifications'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -66,22 +66,22 @@ const actions = {
 
   async markAsRead({ commit }, id) {
     try {
-      await api.patch(`/notificacoes/notificacoes/${id}/`, { read: true })
+      await api.patch(`/notifications/notifications/${id}/`, { read: true })
       commit('MARK_AS_READ', id)
       return { success: true }
     } catch (error) {
-      console.error('Erro ao marcar notificação como lida:', error)
+      console.error('Error marking notification as read:', error)
       return { success: false }
     }
   },
 
   async markAllAsRead({ commit }) {
     try {
-      await api.post('/notificacoes/notificacoes/mark_all_read/')
+      await api.post('/notifications/notifications/mark_all_read/')
       commit('MARK_ALL_AS_READ')
       return { success: true }
     } catch (error) {
-      console.error('Erro ao marcar todas as notificações como lidas:', error)
+      console.error('Error marking all notifications as read:', error)
       return { success: false }
     }
   },

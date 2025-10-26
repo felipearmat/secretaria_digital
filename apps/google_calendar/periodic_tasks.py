@@ -8,32 +8,32 @@ from .tasks import (
 )
 
 
-# Configurações de tarefas periódicas
+# Periodic task configurations
 CELERY_BEAT_SCHEDULE = {
-    # Sincronização automática com Google Calendar (a cada hora)
+    # Automatic synchronization with Google Calendar (every hour)
     'sync-google-calendar-hourly': {
         'task': 'apps.google_calendar.tasks.sync_all_google_calendar_integrations',
-        'schedule': crontab(minute=0),  # A cada hora
+        'schedule': crontab(minute=0),  # Every hour
     },
     
-    # Renovação de tokens (a cada 30 minutos)
+    # Token renewal (every hour)
     'refresh-google-calendar-tokens': {
         'task': 'apps.google_calendar.tasks.refresh_google_calendar_tokens',
-        'schedule': crontab(minute=0, hour='*/1'),  # A cada hora
+        'schedule': crontab(minute=0, hour='*/1'),  # Every hour
     },
     
-    # Limpeza de logs antigos (diariamente às 2h)
+    # Old logs cleanup (daily at 2 AM)
     'cleanup-google-calendar-logs': {
         'task': 'apps.google_calendar.tasks.cleanup_google_calendar_sync_logs',
-        'schedule': crontab(hour=2, minute=0),  # Diariamente às 2h
+        'schedule': crontab(hour=2, minute=0),  # Daily at 2 AM
     },
 }
 
-# Adiciona as tarefas ao schedule se a sincronização automática estiver habilitada
+# Add tasks to schedule if automatic synchronization is enabled
 if getattr(settings, 'GOOGLE_CALENDAR_AUTO_SYNC', True):
-    # Sincronização incremental (a cada 15 minutos)
+    # Incremental synchronization (every 15 minutes)
     CELERY_BEAT_SCHEDULE['sync-google-calendar-incremental'] = {
         'task': 'apps.google_calendar.tasks.sync_all_google_calendar_integrations',
-        'schedule': crontab(minute='*/15'),  # A cada 15 minutos
+        'schedule': crontab(minute='*/15'),  # Every 15 minutes
     }
 

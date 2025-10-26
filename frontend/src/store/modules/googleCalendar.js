@@ -103,7 +103,7 @@ const actions = {
       
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar integrações'
+      const message = error.response?.data?.error || 'Error loading integrations'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -120,7 +120,7 @@ const actions = {
       commit('SET_CURRENT_INTEGRATION', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar integração'
+      const message = error.response?.data?.error || 'Error loading integration'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -137,7 +137,7 @@ const actions = {
       commit('ADD_INTEGRATION', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao criar integração'
+      const message = error.response?.data?.error || 'Error creating integration'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -154,7 +154,7 @@ const actions = {
       commit('UPDATE_INTEGRATION', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao atualizar integração'
+      const message = error.response?.data?.error || 'Error updating integration'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -171,7 +171,7 @@ const actions = {
       commit('REMOVE_INTEGRATION', id)
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao excluir integração'
+      const message = error.response?.data?.error || 'Error deleting integration'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -187,7 +187,7 @@ const actions = {
       const response = await googleCalendarService.getAuthorizationUrl(id)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao autorizar integração'
+      const message = error.response?.data?.error || 'Error authorizing integration'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -204,7 +204,7 @@ const actions = {
       commit('UPDATE_INTEGRATION', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao processar callback'
+      const message = error.response?.data?.error || 'Error processing callback'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -220,7 +220,7 @@ const actions = {
       const response = await googleCalendarService.syncIntegration(id, options)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao sincronizar integração'
+      const message = error.response?.data?.error || 'Error synchronizing integration'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -236,7 +236,7 @@ const actions = {
       const response = await googleCalendarService.testConnection(id)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao testar conexão'
+      const message = error.response?.data?.error || 'Error testing connection'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -253,7 +253,7 @@ const actions = {
       commit('UPDATE_INTEGRATION', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao renovar token'
+      const message = error.response?.data?.error || 'Error refreshing token'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -270,7 +270,7 @@ const actions = {
       commit('SET_EVENTS', response.data.results || response.data)
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar eventos'
+      const message = error.response?.data?.error || 'Error loading events'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -278,16 +278,16 @@ const actions = {
     }
   },
 
-  async createEvent({ commit }, agendamentoId) {
+  async createEvent({ commit }, appointmentId) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await googleCalendarService.createEvent(agendamentoId)
+      const response = await googleCalendarService.createEvent(appointmentId)
       commit('ADD_EVENT', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao criar evento'
+      const message = error.response?.data?.error || 'Error creating event'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -303,7 +303,7 @@ const actions = {
       const response = await googleCalendarService.syncEventToGoogle(eventId)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao sincronizar evento'
+      const message = error.response?.data?.error || 'Error synchronizing event'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -320,7 +320,7 @@ const actions = {
       commit('REMOVE_EVENT', eventId)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao remover evento'
+      const message = error.response?.data?.error || 'Error removing event'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -337,7 +337,7 @@ const actions = {
       commit('SET_SYNC_LOGS', response.data.results || response.data)
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar logs'
+      const message = error.response?.data?.error || 'Error loading logs'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -353,7 +353,7 @@ const actions = {
       const response = await googleCalendarService.syncAll()
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao sincronizar tudo'
+      const message = error.response?.data?.error || 'Error synchronizing all'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -370,7 +370,7 @@ const actions = {
       commit('SET_SYNC_STATS', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar estatísticas'
+      const message = error.response?.data?.error || 'Error loading statistics'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -383,7 +383,7 @@ const actions = {
       const status = await googleCalendarService.checkIntegrationStatus(userId)
       return { success: true, data: status }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao verificar status'
+      const message = error.response?.data?.error || 'Error checking status'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     }

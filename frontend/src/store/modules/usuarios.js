@@ -1,8 +1,8 @@
 import api from '@/services/api'
 
 const state = {
-  usuarios: [],
-  usuario: null,
+  users: [],
+  user: null,
   loading: false,
   error: null,
   pagination: {
@@ -12,30 +12,30 @@ const state = {
   },
   filters: {
     role: '',
-    empresa: '',
-    ativo: '',
+    company: '',
+    active: '',
     search: ''
   }
 }
 
 const mutations = {
-  SET_USUARIOS(state, usuarios) {
-    state.usuarios = usuarios
+  SET_USERS(state, users) {
+    state.users = users
   },
-  SET_USUARIO(state, usuario) {
-    state.usuario = usuario
+  SET_USER(state, user) {
+    state.user = user
   },
-  ADD_USUARIO(state, usuario) {
-    state.usuarios.unshift(usuario)
+  ADD_USER(state, user) {
+    state.users.unshift(user)
   },
-  UPDATE_USUARIO(state, usuario) {
-    const index = state.usuarios.findIndex(u => u.id === usuario.id)
+  UPDATE_USER(state, user) {
+    const index = state.users.findIndex(u => u.id === user.id)
     if (index !== -1) {
-      state.usuarios.splice(index, 1, usuario)
+      state.users.splice(index, 1, user)
     }
   },
-  REMOVE_USUARIO(state, id) {
-    state.usuarios = state.usuarios.filter(u => u.id !== id)
+  REMOVE_USER(state, id) {
+    state.users = state.users.filter(u => u.id !== id)
   },
   SET_LOADING(state, loading) {
     state.loading = loading
@@ -52,7 +52,7 @@ const mutations = {
 }
 
 const actions = {
-  async fetchUsuarios({ commit, state }, params = {}) {
+  async fetchUsers({ commit, state }, params = {}) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
@@ -63,16 +63,16 @@ const actions = {
         ...params
       }
       
-      // Remove parâmetros vazios
+      // Remove empty parameters
       Object.keys(queryParams).forEach(key => {
         if (queryParams[key] === '' || queryParams[key] === null) {
           delete queryParams[key]
         }
       })
       
-      const response = await api.get('/auth/usuarios/', { params: queryParams })
+      const response = await api.get('/auth/users/', { params: queryParams })
       
-      commit('SET_USUARIOS', response.data.results || response.data)
+      commit('SET_USERS', response.data.results || response.data)
       
       if (response.data.count !== undefined) {
         commit('SET_PAGINATION', {
@@ -84,7 +84,7 @@ const actions = {
       
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar usuários'
+      const message = error.response?.data?.error || 'Error loading users'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -92,16 +92,16 @@ const actions = {
     }
   },
 
-  async fetchUsuario({ commit }, id) {
+  async fetchUser({ commit }, id) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.get(`/auth/usuarios/${id}/`)
-      commit('SET_USUARIO', response.data)
+      const response = await api.get(`/auth/users/${id}/`)
+      commit('SET_USER', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao carregar usuário'
+      const message = error.response?.data?.error || 'Error loading user'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -109,16 +109,16 @@ const actions = {
     }
   },
 
-  async createUsuario({ commit }, usuarioData) {
+  async createUser({ commit }, userData) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.post('/auth/usuarios/', usuarioData)
-      commit('ADD_USUARIO', response.data)
+      const response = await api.post('/auth/users/', userData)
+      commit('ADD_USER', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao criar usuário'
+      const message = error.response?.data?.error || 'Error creating user'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -126,16 +126,16 @@ const actions = {
     }
   },
 
-  async updateUsuario({ commit }, { id, data }) {
+  async updateUser({ commit }, { id, data }) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const response = await api.patch(`/auth/usuarios/${id}/`, data)
-      commit('UPDATE_USUARIO', response.data)
+      const response = await api.patch(`/auth/users/${id}/`, data)
+      commit('UPDATE_USER', response.data)
       return { success: true, data: response.data }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao atualizar usuário'
+      const message = error.response?.data?.error || 'Error updating user'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -143,16 +143,16 @@ const actions = {
     }
   },
 
-  async deleteUsuario({ commit }, id) {
+  async deleteUser({ commit }, id) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      await api.delete(`/auth/usuarios/${id}/`)
-      commit('REMOVE_USUARIO', id)
+      await api.delete(`/auth/users/${id}/`)
+      commit('REMOVE_USER', id)
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.error || 'Erro ao excluir usuário'
+      const message = error.response?.data?.error || 'Error deleting user'
       commit('SET_ERROR', message)
       return { success: false, error: message }
     } finally {
@@ -166,23 +166,23 @@ const actions = {
 }
 
 const getters = {
-  usuarios: state => state.usuarios,
-  usuario: state => state.usuario,
+  users: state => state.users,
+  user: state => state.user,
   loading: state => state.loading,
   error: state => state.error,
   pagination: state => state.pagination,
   filters: state => state.filters,
   
-  usuariosPorRole: state => role => {
-    return state.usuarios.filter(u => u.role === role)
+  usersByRole: state => role => {
+    return state.users.filter(u => u.role === role)
   },
   
-  atores: state => {
-    return state.usuarios.filter(u => u.role === 'ator')
+  actors: state => {
+    return state.users.filter(u => u.role === 'actor')
   },
   
   admins: state => {
-    return state.usuarios.filter(u => ['admin', 'gerente'].includes(u.role))
+    return state.users.filter(u => ['admin', 'manager'].includes(u.role))
   }
 }
 

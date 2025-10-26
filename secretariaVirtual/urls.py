@@ -9,11 +9,11 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/auth/', include('apps.autenticacao.urls')),
-    path('api/companies/', include('apps.empresas.urls')),
-    path('api/appointments/', include('apps.agendamentos.urls')),
-    path('api/notifications/', include('apps.notificacoes.urls')),
-    path('api/payments/', include('apps.pagamentos.urls')),
+    path('api/auth/', include('apps.authentication.urls')),
+    path('api/companies/', include('apps.companies.urls')),
+    path('api/appointments/', include('apps.appointments.urls')),
+    path('api/notifications/', include('apps.notifications.urls')),
+    # path('api/payments/', include('apps.payments.urls')),  # Temporarily disabled
     path('api/google-calendar/', include('apps.google_calendar.urls')),
     path('api/feature-flags/', include('apps.feature_flags.urls')),
 ]
