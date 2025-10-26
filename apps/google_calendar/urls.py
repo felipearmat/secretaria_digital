@@ -7,9 +7,9 @@ from .views import (
 )
 
 router = DefaultRouter()
-router.register(r'integrations', GoogleCalendarIntegrationViewSet)
-router.register(r'events', GoogleCalendarEventViewSet)
-router.register(r'sync-logs', GoogleCalendarSyncLogViewSet)
+router.register(r'integrations', GoogleCalendarIntegrationViewSet, basename='googlecalendar-integration')
+router.register(r'events', GoogleCalendarEventViewSet, basename='googlecalendar-event')
+router.register(r'sync-logs', GoogleCalendarSyncLogViewSet, basename='googlecalendar-synclog')
 
 urlpatterns = [
     path('', include(router.urls)),

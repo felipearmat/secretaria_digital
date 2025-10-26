@@ -1,0 +1,71 @@
+[tool.black]
+line-length = 120
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+skip_glob = ["*/migrations/*", "venv/*", ".venv/*"]
+known_django = "django"
+known_first_party = ["apps", "secretariaVirtual"]
+sections = ["FUTURE", "STDLIB", "DJANGO", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+[tool.pylint.main]
+load-plugins = "pylint_django"
+django-settings-module = "secretariaVirtual.settings"
+ignore = ["migrations", "venv", ".venv"]
+max-line-length = 120
+
+[tool.pylint.messages_control]
+disable = [
+    "C0111",  # missing-docstring
+    "C0103",  # invalid-name
+    "R0903",  # too-few-public-methods
+    "R0913",  # too-many-arguments
+    "W0212",  # protected-access
+]
+
+[tool.pylint.design]
+max-complexity = 25
+
+[tool.mypy]
+python_version = "3.11"
+plugins = ["mypy_django_plugin.main"]
+ignore_missing_imports = true
+warn_return_any = true
+warn_unused_configs = true
+exclude = [
+    "migrations",
+    "venv",
+    ".venv",
+]
+
+[[tool.mypy.overrides]]
+module = "*.migrations.*"
+ignore_errors = true
+
+[tool.django-stubs]
+django_settings_module = "secretariaVirtual.settings"
+
+[tool.bandit]
+exclude_dirs = ["/venv/", "/.venv/", "/migrations/", "/tests/"]
+skips = ["B101", "B601"]
+

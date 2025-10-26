@@ -48,7 +48,7 @@ LOCAL_APPS = [
     'apps.authentication',
     'apps.appointments',
     'apps.notifications',
-    # 'apps.payments',  # Temporarily disabled
+    'apps.payments',
     'apps.google_calendar',
     'apps.feature_flags',
 ]
